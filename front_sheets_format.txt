@@ -1,0 +1,289 @@
+INTERNSHIP REPORT 
+On 
+INTERNSHIP TITLE 
+Submitted In Partial fulfilment of the requirements for the degree of 
+Bachelor of Computer Applications 
+Submitted by 
+ STUDENT NAME      
+ USN 
+ 
+Under the Guidance 
+GUIDE NAME 
+DESIGNATION 
+ 
+ 
+ 
+ 
+NMKRV College  
+45/1, 22nd cross, Jayanagar, 3rd Block, 
+Bengaluru - 560011, Karnataka, India 
+Autonomous Intuition | NAAC Accredited 
+ 
+2025 - 2026 
+
+ 
+NMKRV College  
+45/1, 22nd cross, Jayanagar, 3rd Block, 
+Bengaluru - 560011, Karnataka, India 
+Autonomous Intuition | NAAC Accredited 
+ 
+BONAFIDE CERTIFICATE 
+ 
+This is to certify that the Internship report INTERNSHIP-PROJECT TITLE 
+submitted by STUDENT NAME-REGISTER NUMBER in partial fulfillment of 
+the requirements for the BACHELORS OF COMPUTER APPLICATIONS is a 
+Bonafide record of the work carried out under my guidance and supervision of the 
+NMKRV College during the academic year 2025-2026. 
+ 
+ 
+Authorized Signature of the company 
+ 
+ 
+ 
+Signature of Guide​
+Signature of HOD 
+ 
+ 
+ 
+Internal Examiner​
+External Examiner 
+ 
+ 
+ 
+Date of Examination​
+Student Signature 
+
+ 
+ 
+ACKNOWLEDGEMENT 
+ 
+I would like to express my sincere gratitude to all those who have supported and guided me throughout 
+this internship experience. First and foremost, I extend my heartfelt thanks to Dr. R. SUCHITHRA, 
+Principal of NMKRV College, for her visionary leadership in creating opportunities for students to 
+engage in meaningful internships. 
+I am deeply grateful to Mrs.Deepalakshmi R, Head of the Department of Computer Applications and 
+Guide, Mrs./Ms. GUIDE NAME for their constant encouragement and guidance throughout my 
+academic journey, which paved the way for this internship opportunity. 
+I would also like to thank the entire team at COMPANY NAME for their warm welcome and for 
+providing a nurturing environment that fostered learning and innovation. 
+Lastly, I am thankful to my family and friends for their unwavering support and encouragement 
+throughout this internship period. 
+This experience has been invaluable, and I am grateful to everyone who has contributed to making it 
+so enriching and memorable. 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+INTERNSHIP CERTIFICATE 
+
+WEEKLY OVERVIEW 
+ 
+DATE 
+DAY 
+MODULE COMPLETED 
+SIGN 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+Table of Contents 
+ 
+ 
+Chapters 
+Content 
+Page No. 
+Abstract 
+ 
+1 
+1.​Introduction 
+1.1.​Company Profile 
+1.2.​Organizational Study 
+1.3.​Project Specifications 
+1.4.​Tools used 
+1.4.1​Hardware Specification 
+1.4.2​Software Specification 
+ 
+2 
+2.​Internship Activities (MENTION BASED ON YOUR 
+INTERNSHIP-PROJECT) 
+2.1.​Frontend Development 
+2.2.​HTML 
+2.3.​CSS 
+2.4.​Bootstrap 
+2.5.​JavaScript 
+2.6.​React 
+ 
+3 
+Internship Project Discussion 
+ 
+4 
+Conclusion 
+ 
+ 
+
+Table of Figures 
+ 
+ 
+Fig.No 
+Fig Name 
+Page No 
+1.1 
+ 
+ 
+1.2 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
