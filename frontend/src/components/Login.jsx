@@ -43,7 +43,7 @@ function Login() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 6000); // 6 sec timeout
 
-    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    const API_BASE = 'https://amber-backend-flng.onrender.com';
 
     try {
       const response = await fetch(`${API_BASE}/auth/login`, {

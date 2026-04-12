@@ -23,7 +23,7 @@ export default function CitizenUpload() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    const API_BASE = 'https://amber-backend-flng.onrender.com';
     fetch(`${API_BASE}/missing_persons/`)
       .then(r => r.json())
       .then(data => setMissingPersons(data.filter(p => p.status === 'ACTIVE')))
@@ -71,7 +71,7 @@ export default function CitizenUpload() {
     formData.append('sighting_lng',  location.lng);
     formData.append('photo', file);
 
-    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    const API_BASE = 'https://amber-backend-flng.onrender.com';
     try {
       const res = await fetch(`${API_BASE}/citizen_sightings/`, {
         method: 'POST',
