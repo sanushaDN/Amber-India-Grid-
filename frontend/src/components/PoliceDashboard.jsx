@@ -390,6 +390,24 @@ export default function PoliceDashboard() {
                           pathOptions={{ color:'#2dd4bf', weight:1, dashArray:'3,6', fillOpacity:0.05 }} radius={25000}/>
                       </Marker>
                     ))}
+                    {/* Citizen Sighting Markers */}
+                    {sightings.map(s => (
+                      <Circle
+                        key={`sighting-${s.id}`}
+                        center={[s.sighting_lat, s.sighting_lng]}
+                        pathOptions={{ color: '#f59e0b', fillColor: '#f59e0b', fillOpacity: 0.4, weight: 2 }}
+                        radius={800}
+                      >
+                        <Popup className="custom-popup">
+                          <div className="p-1">
+                            <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">Citizen Sighting</p>
+                            <p className="text-xs font-bold text-white">Match: {Math.round(s.match_score || 0)}%</p>
+                            <p className="text-[9px] text-slate-400 mt-1">{new Date(s.reported_at).toLocaleString()}</p>
+                          </div>
+                        </Popup>
+                      </Circle>
+                    ))}
+                    {/* Live Intercept Trackers */}
                     {Object.keys(liveTrackers).map(id => {
                       const tracker = liveTrackers[id];
                       return (
@@ -457,7 +475,7 @@ export default function PoliceDashboard() {
                     <div key={p.id} onClick={() => { setMapCenter([p.last_known_lat, p.last_known_lng]); openTimeline(p); }}
                       className="group p-3 rounded-xl cursor-pointer hover:bg-white/5 transition-all border border-transparent hover:border-white/5">
                       <div className="flex items-center gap-3">
-                        <img src={`${API_BASE}/${p.photo_path}`} className="w-9 h-9 rounded-lg object-cover opacity-70 group-hover:opacity-100 transition-all" alt=""/>
+                        <img src={getImgUrl(p.photo_path)} className="w-9 h-9 rounded-lg object-cover opacity-70 group-hover:opacity-100 transition-all" alt=""/>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-black uppercase truncate group-hover:text-cyan-400 transition-colors">{p.full_name}</p>
                           <span className={`text-[8px] font-black px-1.5 py-0.5 rounded border ${pri.cls}`}>{pri.label}</span>
@@ -485,6 +503,24 @@ export default function PoliceDashboard() {
                     {p.status === 'ACTIVE' && <Circle center={[p.last_known_lat, p.last_known_lng]} pathOptions={{ color:'#2dd4bf', weight:1, dashArray:'3,6', fillOpacity:0.03 }} radius={20000}/>}
                   </React.Fragment>
                 ))}
+                {/* Citizen Sighting Markers on Full Map */}
+                {sightings.map(s => (
+                  <Circle
+                    key={`full-sighting-${s.id}`}
+                    center={[s.sighting_lat, s.sighting_lng]}
+                    pathOptions={{ color: '#f59e0b', fillColor: '#f59e0b', fillOpacity: 0.4, weight: 2 }}
+                    radius={800}
+                  >
+                    <Popup className="custom-popup">
+                      <div className="p-1">
+                        <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">Citizen Sighting</p>
+                        <p className="text-xs font-bold text-white">Match: {Math.round(s.match_score || 0)}%</p>
+                        <p className="text-[9px] text-slate-400 mt-1">{new Date(s.reported_at).toLocaleString()}</p>
+                      </div>
+                    </Popup>
+                  </Circle>
+                ))}
+                {/* Live Intercept Trackers on Full Map */}
                 {Object.keys(liveTrackers).map(id => {
                   const tracker = liveTrackers[id];
                   return (
@@ -494,7 +530,14 @@ export default function PoliceDashboard() {
                       pathOptions={{ color: '#6366f1', fillColor: '#6366f1', fillOpacity: 0.5, weight: 2 }} 
                       radius={1000}
                       className="animate-pulse"
-                    />
+                    >
+                      <Popup className="custom-popup">
+                        <div className="p-1">
+                          <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Live Reporter</p>
+                          <p className="text-xs font-bold text-white uppercase">{tracker.name}</p>
+                        </div>
+                      </Popup>
+                    </Circle>
                   );
                 })}
               </MapContainer>
@@ -536,7 +579,7 @@ export default function PoliceDashboard() {
                             <div className="flex items-center gap-4">
                               <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-900 border border-white/10 shadow-xl flex-shrink-0">
                                 <img 
-                                  src={`http://localhost:8000/${p.photo_path}`} 
+                                  src={getImgUrl(p.photo_path)} 
                                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
                                   alt=""
                                   onError={(e) => { e.target.src = "https://via.placeholder.com/150?text=No+Photo"; }}
