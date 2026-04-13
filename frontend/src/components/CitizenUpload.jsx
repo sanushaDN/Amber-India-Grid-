@@ -18,6 +18,14 @@ function RecenterMap({ center }) {
 
 const API_BASE = 'https://amber-backend-flng.onrender.com';
 
+// Tactical URL Resolver
+const getImgUrl = (path) => {
+  if (!path) return "https://via.placeholder.com/150?text=No+Photo";
+  if (path.startsWith('http')) return path;
+  const cleanPath = path.replace(/^\/+/, '').replace('uploads/uploads/', 'uploads/');
+  return `${API_BASE}/${cleanPath}`;
+};
+
 export default function CitizenUpload() {
   const [step, setStep]                 = useState(1);
   const [location, setLocation]         = useState({ lat: 28.6139, lng: 77.2090 });
@@ -288,7 +296,7 @@ export default function CitizenUpload() {
                     <div key={p.id} onClick={() => { setSelectedPerson(p); setStep(2); }}
                       className="glass-panel p-4 rounded-[24px] flex items-center gap-4 cursor-pointer group border border-white/5 hover:border-amber-500/30 transition-all active:scale-[0.98]">
                       <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-900 border border-white/5 flex-shrink-0 relative">
-                        <img src={`${API_BASE}/${p.photo_path}`} alt=""
+                        <img src={getImgUrl(p.photo_path)} alt=""
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                           onError={e => { e.target.style.display='none'; }}/>
                       </div>
@@ -324,7 +332,7 @@ export default function CitizenUpload() {
             </div>
             {/* Selected person reminder */}
             <div className="flex items-center gap-3 glass-panel p-4 rounded-xl border border-amber-500/20 mb-6">
-              <img src={`${API_BASE}/${selectedPerson?.photo_path}`} alt=""
+              <img src={getImgUrl(selectedPerson?.photo_path)} alt=""
                 className="w-10 h-10 rounded-lg object-cover" onError={e => { e.target.style.display='none'; }}/>
               <div>
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Reporting sighting for</p>

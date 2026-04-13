@@ -24,6 +24,16 @@ function ChangeView({ center }) {
   return null;
 }
 
+// Tactical URL Resolver
+const getImgUrl = (path) => {
+  if (!path) return "https://via.placeholder.com/150?text=No+Photo";
+  // If path already starts with http, return it
+  if (path.startsWith('http')) return path;
+  // Clean up any double slashes or extra 'uploads' prefix
+  const cleanPath = path.replace(/^\/+/, '').replace('uploads/uploads/', 'uploads/');
+  return `${API_BASE}/${cleanPath}`;
+};
+
 function getCasePriority(reportedAt) {
   const hrs = (Date.now() - new Date(reportedAt)) / 3600000;
   if (hrs > 24) return { label: 'CRITICAL', cls: 'text-rose-400 bg-rose-500/10 border-rose-500/30', dot: 'bg-rose-500', pulse: true };
@@ -212,7 +222,7 @@ export default function PoliceDashboard() {
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Case File Record</p>
                 <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 relative">
                   <div className="biometric-laser" />
-                  <img src={`${API_BASE}/${activeAlert.case_photo}`} className="w-full h-full object-cover" alt=""/>
+                  <img src={getImgUrl(activeAlert.case_photo)} className="w-full h-full object-cover" alt=""/>
                   <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
                     <p className="text-[9px] font-black text-white uppercase">{activeAlert.person_name}</p>
                   </div>
@@ -251,9 +261,9 @@ export default function PoliceDashboard() {
                 <div className="flex justify-between items-end">
                   <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Live Sighting Feed</p>
                 </div>
-                <div className="aspect-[4/3] rounded-2xl overflow-hidden border-2 border-rose-500/40 relative shadow-[0_0_40px_rgba(244,63,94,0.15)]">
+                <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-2 border-rose-500/40 relative shadow-[0_0_40px_rgba(244,63,94,0.15)]">
                   <div className="biometric-laser" style={{ animationDelay: '1.2s' }}/>
-                  <img src={`${API_BASE}/${activeAlert.sighting_photo}`} className="w-full h-full object-cover" alt=""/>
+                  <img src={getImgUrl(activeAlert.sighting_photo)} className="w-full h-full object-cover" alt=""/>
                   <div className="absolute bottom-3 left-3 right-3 bg-rose-500/20 backdrop-blur-lg px-3 py-1.5 rounded-lg border border-rose-500/30">
                     <p className="text-[9px] font-black text-rose-100 flex items-center gap-2">
                        <MapIcon size={9}/> {activeAlert.lat.toFixed(4)}, {activeAlert.lng.toFixed(4)}
@@ -356,7 +366,7 @@ export default function PoliceDashboard() {
                     {critical.map(p => (
                       <div key={p.id} onClick={() => openTimeline(p)} className="group flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 cursor-pointer transition-all border border-transparent hover:border-white/5">
                         <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-900 flex-shrink-0">
-                          <img src={`${API_BASE}/${p.photo_path}`} className="w-full h-full object-cover" alt=""/>
+                          <img src={getImgUrl(p.photo_path)} className="w-full h-full object-cover" alt=""/>
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-black uppercase truncate group-hover:text-cyan-400">{p.full_name}</p>
