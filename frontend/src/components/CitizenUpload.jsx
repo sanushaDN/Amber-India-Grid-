@@ -16,6 +16,8 @@ function RecenterMap({ center }) {
   return null;
 }
 
+const API_BASE = 'https://amber-backend-flng.onrender.com';
+
 export default function CitizenUpload() {
   const [step, setStep]                 = useState(1);
   const [location, setLocation]         = useState({ lat: 28.6139, lng: 77.2090 });
@@ -34,7 +36,6 @@ export default function CitizenUpload() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const API_BASE = 'https://amber-backend-flng.onrender.com';
     fetch(`${API_BASE}/missing_persons/`)
       .then(r => r.json())
       .then(data => setMissingPersons(data.filter(p => p.status === 'ACTIVE')))
@@ -85,7 +86,6 @@ export default function CitizenUpload() {
     formData.append('sighting_lng',  location.lng);
     formData.append('photo', file);
 
-    const API_BASE = 'https://amber-backend-flng.onrender.com';
     try {
       const res = await fetch(`${API_BASE}/citizen_sightings/`, {
         method: 'POST',
@@ -152,11 +152,16 @@ export default function CitizenUpload() {
         <div className="security-grid" />
 
         {/* Shockwave Effect */}
-        <div className="relative mb-10">
-          <div className="shockwave-ring" />
-          <div className="shockwave-ring" style={{ animationDelay: '0.3s' }} />
-          <div className="w-24 h-24 bg-amber-500/15 rounded-full flex items-center justify-center border border-amber-500/25 shadow-[0_0_80px_rgba(245,158,11,0.2)] relative z-10">
-            <CheckCircle size={48} className="text-amber-500" />
+        <div className="relative mb-10 group">
+          <div className="shockwave-ring border-indigo-500/50" />
+          <div className="shockwave-ring border-teal-500/30" style={{ animationDelay: '0.3s' }} />
+          <div className="w-24 h-24 bg-teal-500/10 rounded-full flex items-center justify-center border border-teal-500/25 shadow-[0_0_80px_rgba(45,212,191,0.2)] relative z-10">
+            <Radio size={48} className="text-teal-400 animate-pulse" />
+          </div>
+          
+          {/* Tactical Overlay */}
+          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap bg-teal-500 text-black px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.2em] shadow-lg animate-bounce z-20">
+            Live Signal Transmitting
           </div>
         </div>
 

@@ -5,7 +5,16 @@ import { ShieldAlert, Focus, Fingerprint, Globe, ChevronRight, Search, Activity,
 const LandingPage = () => {
   const navigate = useNavigate();
   const [showMock, setShowMock] = useState(false);
-  const [subscribed, setSubscribed] = useState(false);
+  const [subscribed, setSubscribed] = useState(() => {
+    return localStorage.getItem('sovereign_subscribed') === 'true';
+  });
+
+  const toggleSubscription = () => {
+    const nextState = !subscribed;
+    setSubscribed(nextState);
+    localStorage.setItem('sovereign_subscribed', nextState);
+    if (nextState) triggerDemo();
+  };
 
   // Mock Notification Trigger
   const triggerDemo = () => {
@@ -97,8 +106,8 @@ const LandingPage = () => {
                 </p>
                 <div className="flex items-center gap-4">
                   <button 
-                    onClick={() => { setSubscribed(true); triggerDemo(); }}
-                    className={`flex items-center gap-3 px-6 py-3 rounded-xl font-bold transition-all ${subscribed ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/10 hover:bg-white/20 text-white border border-white/10'}`}
+                    onClick={toggleSubscription}
+                    className={`flex items-center gap-3 px-6 py-3 rounded-xl font-bold transition-all ${subscribed ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.1)]' : 'bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-xl active:scale-95'}`}
                   >
                     {subscribed ? <ShieldCheck size={20} /> : <Bell size={20} />}
                     {subscribed ? 'GRID LINKED' : 'ENROLL DEVICE'}
