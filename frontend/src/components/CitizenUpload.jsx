@@ -4,7 +4,17 @@ import {
   ChevronRight, Activity, Clock, AlertCircle, Wifi,
   Shield, Award, Radio
 } from 'lucide-react';
+import { MapContainer, TileLayer, Circle, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 import { useNavigate } from 'react-router-dom';
+
+function RecenterMap({ center }) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView(center, map.getZoom(), { animate: true });
+  }, [center, map]);
+  return null;
+}
 
 export default function CitizenUpload() {
   const [step, setStep]                 = useState(1);
@@ -29,17 +39,20 @@ export default function CitizenUpload() {
       .then(data => setMissingPersons(data.filter(p => p.status === 'ACTIVE')))
       .catch(() => {});
 
+    let watchId;
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
+      watchId = navigator.geolocation.watchPosition(
         (pos) => {
           setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
           setGpsStatus('ok');
         },
-        () => setGpsStatus('denied')
+        () => setGpsStatus('denied'),
+        { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 }
       );
     } else {
       setGpsStatus('denied');
     }
+    return () => { if (watchId) navigator.geolocation.clearWatch(watchId); };
   }, []);
 
   const handleFileChange = (e) => {
@@ -238,7 +251,7 @@ export default function CitizenUpload() {
                     <div key={p.id} onClick={() => { setSelectedPerson(p); setStep(2); }}
                       className="glass-panel p-4 rounded-[24px] flex items-center gap-4 cursor-pointer group border border-white/5 hover:border-amber-500/30 transition-all active:scale-[0.98]">
                       <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-900 border border-white/5 flex-shrink-0 relative">
-                        <img src={`http://localhost:8000/${p.photo_path}`} alt=""
+                        <img src={`${API_BASE}/${p.photo_path}`} alt=""
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                           onError={e => { e.target.style.display='none'; }}/>
                       </div>
@@ -274,7 +287,7 @@ export default function CitizenUpload() {
             </div>
             {/* Selected person reminder */}
             <div className="flex items-center gap-3 glass-panel p-4 rounded-xl border border-amber-500/20 mb-6">
-              <img src={`http://localhost:8000/${selectedPerson?.photo_path}`} alt=""
+              <img src={`${API_BASE}/${selectedPerson?.photo_path}`} alt=""
                 className="w-10 h-10 rounded-lg object-cover" onError={e => { e.target.style.display='none'; }}/>
               <div>
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Reporting sighting for</p>
@@ -305,7 +318,6 @@ export default function CitizenUpload() {
               <p className="text-slate-600 text-xs mt-2 font-bold uppercase tracking-widest">Review your sighting before submitting</p>
             </div>
 
-            {/* Preview card */}
             <div className="glass-panel p-5 rounded-[28px] border border-white/5 mb-4 flex gap-5">
               <div className="w-20 h-20 rounded-xl overflow-hidden bg-slate-900 border border-white/5 flex-shrink-0 relative">
                 <div className="biometric-laser" style={{ animationDuration: '3s' }}/>
@@ -320,6 +332,25 @@ export default function CitizenUpload() {
                   warn={gpsStatus === 'denied'}/>
                 <InfoRow icon={<Clock size={12}/>}    label="Time" val={new Date().toLocaleTimeString()}/>
               </div>
+            </div>
+
+            {/* Tactical GPS Scan */}
+            <div className="h-44 glass-panel rounded-[28px] border border-white/5 mb-4 overflow-hidden relative">
+               <div className="absolute inset-0 z-10 pointer-events-none border border-amber-500/10 rounded-[28px]" />
+               <div className="scanline" />
+               <MapContainer center={[location.lat, location.lng]} zoom={16} className="w-full h-full grayscale-[0.6] contrast-[1.2]" zoomControl={false} scrollWheelZoom={false} dragging={false} touchZoom={false}>
+                 <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+                 <RecenterMap center={[location.lat, location.lng]} />
+                 <Circle center={[location.lat, location.lng]} radius={10} pathOptions={{ color: '#f59e0b', weight: 4, fillOpacity: 0.8, className: 'animate-pulse' }} />
+                 <Circle center={[location.lat, location.lng]} radius={100} pathOptions={{ color: '#f59e0b', weight: 1, dashArray: '5, 10', fillOpacity: 0.05 }} />
+               </MapContainer>
+               <div className="absolute top-3 left-3 z-20 bg-black/70 backdrop-blur-md px-2.5 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
+                 <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse shadow-[0_0_8px_#f43f5e]" />
+                 <span className="text-[8px] font-black text-white uppercase tracking-widest leading-none">Live Coordinate Sync</span>
+               </div>
+               <div className="absolute bottom-3 right-3 z-20 px-2 py-1 bg-black/40 backdrop-blur-sm rounded text-[8px] font-mono text-slate-400">
+                 {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
+               </div>
             </div>
 
             {/* AI Confidence Meter */}

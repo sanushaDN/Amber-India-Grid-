@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldAlert, Focus, Fingerprint, Globe, ChevronRight, Search, Activity, ScanFace, Lock } from 'lucide-react';
+import { ShieldAlert, Focus, Fingerprint, Globe, ChevronRight, Search, Activity, ScanFace, Lock, Bell, X, ShieldCheck } from 'lucide-react';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [showMock, setShowMock] = useState(false);
+  const [subscribed, setSubscribed] = useState(false);
+
+  // Mock Notification Trigger
+  const triggerDemo = () => {
+    setShowMock(true);
+    setTimeout(() => {
+      const audio = new Audio('https://www.soundjay.com/buttons/beep-07a.mp3');
+      audio.play().catch(() => {});
+    }, 500);
+  };
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100 flex flex-col font-['Outfit'] relative overflow-hidden">
@@ -69,6 +80,51 @@ const LandingPage = () => {
           </button>
         </div>
 
+        {/* NEW: Sovereign Grid Enrollment */}
+        <div className="mt-20 w-full max-w-4xl animate-fade-in-up" style={{ animationDelay: '500ms' }}>
+          <div className="glass-panel p-1 border border-white/5 bg-white/[0.02]">
+            <div className="flex flex-col md:flex-row items-center gap-8 p-8 py-10">
+              <div className="flex-1 text-left">
+                <div className="flex items-center gap-2 mb-4 text-amber-500">
+                  <Bell size={20} className="animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] font-mono">Real-Time Broadcast Enrollment</span>
+                </div>
+                <h3 className="text-3xl font-bold mb-4">Join the Sovereign Watch.</h3>
+                <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                  Enroll your device in the AMBER-India national grid to receive instant, 
+                  location-based push alerts even when your browser is closed. 
+                  Zero latency. Infinite vigilance.
+                </p>
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => { setSubscribed(true); triggerDemo(); }}
+                    className={`flex items-center gap-3 px-6 py-3 rounded-xl font-bold transition-all ${subscribed ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/10 hover:bg-white/20 text-white border border-white/10'}`}
+                  >
+                    {subscribed ? <ShieldCheck size={20} /> : <Bell size={20} />}
+                    {subscribed ? 'GRID LINKED' : 'ENROLL DEVICE'}
+                  </button>
+                  {!subscribed && (
+                    <span className="text-[10px] text-slate-600 font-black uppercase tracking-widest animate-pulse">
+                      AWAITING HANDSHAKE...
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="w-full md:w-[320px] h-[160px] rounded-2xl bg-black/40 border border-white/5 relative overflow-hidden flex flex-col items-center justify-center p-6 text-center group cursor-pointer" onClick={triggerDemo}>
+                <div className="scanline" />
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative z-10 flex flex-col items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+                    <Activity size={18} className="text-amber-500" />
+                  </div>
+                  <p className="text-xs font-black uppercase tracking-widest text-slate-400">Preview Background Intel</p>
+                  <p className="text-[10px] text-slate-600 italic">Click to simulate lock-screen alert</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Feature Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mt-24 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
           
@@ -111,6 +167,45 @@ const LandingPage = () => {
           © 2026 AMBER-India GRID • Government Internal Protocol • Sentinel Elite V7.0
         </p>
       </footer>
+
+      {/* NATIVE LOCK-SCREEN MOCKUP OVERLAY */}
+      {showMock && (
+        <div className="mock-lock-screen" onClick={() => setShowMock(false)}>
+          <div className="lock-time">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+          <div className="lock-date">
+            {new Date().toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' })}
+          </div>
+          
+          <div className="mock-notification" onClick={(e) => e.stopPropagation()}>
+            <div className="notification-header">
+              <div className="notification-icon">
+                <ShieldAlert size={12} />
+              </div>
+              <span className="notification-title">AMBER GRID • SYSTEM BROADCAST</span>
+              <span className="notification-time">1m ago</span>
+            </div>
+            <div className="notification-body">
+              <h4 className="notification-body-title">⚠️ AMBER ALERT: CRITICAL BROADCAST</h4>
+              <p className="notification-body-text">
+                A new missing person case has been registered in the Sovereign Grid. 
+                Intelligence indicates sightings in your proximity. Tap for biometric coordinates.
+              </p>
+            </div>
+          </div>
+
+          <div className="absolute bottom-12 flex flex-col items-center gap-2 text-white/40 animate-bounce">
+            <ChevronRight size={24} className="-rotate-90" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Tap anywhere to dismiss</span>
+          </div>
+
+          <button 
+            onClick={() => setShowMock(false)}
+            className="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/40 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all text-white/60"
+          >
+            <X size={20} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -9,4 +9,12 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('[SW] Grid Link Established:', reg))
+      .catch(err => console.log('[SW] Grid Link Failed:', err));
+  });
+}
+
 /* V5.1 FORCED_SYNC_ACTIVE: TRUE */

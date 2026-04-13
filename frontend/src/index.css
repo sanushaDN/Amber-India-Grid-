@@ -354,10 +354,114 @@ body {
 }
 
 .circular-progress::after {
-  content: "";
-  width: 82%;
-  height: 82%;
   background: #070b14;
   border-radius: 50%;
   position: absolute;
 }
+
+/* ═══ MOCK NOTIFICATION SYSTEM (V7.1) ═══ */
+.mock-lock-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-image: url('https://images.unsplash.com/photo-1614850553959-d670c50d197e?q=80&w=2070&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 100px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.mock-lock-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(5px);
+}
+
+.lock-time {
+  position: relative;
+  z-index: 10;
+  font-size: 80px;
+  font-weight: 200;
+  color: white;
+  margin-bottom: 5px;
+  letter-spacing: -2px;
+}
+
+.lock-date {
+  position: relative;
+  z-index: 10;
+  font-size: 18px;
+  font-weight: 500;
+  color: white;
+  margin-bottom: 40px;
+}
+
+.mock-notification {
+  position: relative;
+  z-index: 10;
+  width: 92%;
+  max-width: 360px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
+  padding: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  animation: notificationSlide 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes notificationSlide {
+  0% { transform: translateY(100px) scale(0.9); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.notification-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.notification-icon {
+  width: 20px;
+  height: 20px;
+  background: #f59e0b;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+}
+
+.notification-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.6);
+  flex: 1;
+}
+
+.notification-time {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+}
+
+.notification-body-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 2px;
+}
+
+.notification-body-text {
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.4;
+}
+
