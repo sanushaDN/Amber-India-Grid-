@@ -30,6 +30,7 @@ export default function CitizenUpload() {
   const [aiScore, setAiScore]           = useState(0);
   const [aiRunning, setAiRunning]       = useState(false);
   const [showBadge, setShowBadge]       = useState(false);
+  const [latestSightingId, setLatestSightingId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -91,6 +92,8 @@ export default function CitizenUpload() {
         body: formData,
       });
       if (res.ok) {
+        const data = await res.json();
+        setLatestSightingId(data.id);
         setSuccess(true);
         // Delay badge reveal for dramatic effect
         setTimeout(() => setShowBadge(true), 800);
@@ -111,6 +114,35 @@ export default function CitizenUpload() {
     if (aiScore >= 50) return { rank: 'OBSERVER', color: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/30', glow: 'neon-glow-text', desc: 'Valuable lead. Officers will review your submission.' };
     return { rank: 'CONTRIBUTOR', color: 'text-slate-400', bg: 'bg-white/5 border-white/10', glow: '', desc: 'Every report matters. Your data strengthens the grid.' };
   };
+
+  // LIVE INTERCEPT TRACKING SENDER
+  useEffect(() => {
+    if (!success || !latestSightingId) return;
+
+    const WS_BASE = 'wss://amber-backend-flng.onrender.com';
+    const socket = new WebSocket(`${WS_BASE}/ws/police_dashboard`);
+    
+    let interval;
+    socket.onopen = () => {
+      console.log('[BEACON] Tactical Signal Established');
+      interval = setInterval(() => {
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send(JSON.stringify({
+            type: "LIVE_COORDINATE_UPDATE",
+            sighting_id: latestSightingId,
+            person_name: selectedPerson?.full_name,
+            lat: location.lat,
+            lng: location.lng
+          }));
+        }
+      }, 3000); // 3-second heartbeat
+    };
+
+    return () => {
+      clearInterval(interval);
+      socket.close();
+    };
+  }, [success, latestSightingId, location, selectedPerson]);
 
   /* ── SUCCESS SCREEN WITH HONOR BADGE ── */
   if (success) {

@@ -50,6 +50,7 @@ export default function PoliceDashboard() {
   const [form, setForm] = useState({ full_name: '', age: '', description: '', lat: 28.6139, lng: 77.209 });
   const [file, setFile]       = useState(null);
   const [submitting, setSub]  = useState(false);
+  const [liveTrackers, setLiveTrackers] = useState({}); // { sighting_id: { lat, lng, name, ts } }
 
   const toast = (msg, colour = 'emerald') => {
     setToastMsg({ msg, colour });
@@ -96,8 +97,35 @@ export default function PoliceDashboard() {
         toast(`${d.name} marked as RECOVERED!`, 'emerald');
         fetchData();
       }
+      if (d.type === 'LIVE_COORDINATE_UPDATE') {
+        setLiveTrackers(prev => ({
+          ...prev,
+          [d.sighting_id]: {
+            lat: d.lat,
+            lng: d.lng,
+            name: d.person_name,
+            ts: Date.now()
+          }
+        }));
+      }
     };
-    return () => ws.close();
+    
+    // Cleanup stale trackers every 10 seconds
+    const cleanup = setInterval(() => {
+      setLiveTrackers(prev => {
+        const next = { ...prev };
+        const now = Date.now();
+        Object.keys(next).forEach(id => {
+          if (now - next[id].ts > 15000) delete next[id]; // 15s timeout
+        });
+        return next;
+      });
+    }, 10000);
+
+    return () => {
+      ws.close();
+      clearInterval(cleanup);
+    };
   }, [fetchData]);
 
   const handleAuthorizeDispatch = () => {
@@ -352,6 +380,26 @@ export default function PoliceDashboard() {
                           pathOptions={{ color:'#2dd4bf', weight:1, dashArray:'3,6', fillOpacity:0.05 }} radius={25000}/>
                       </Marker>
                     ))}
+                    {Object.keys(liveTrackers).map(id => {
+                      const tracker = liveTrackers[id];
+                      return (
+                        <Circle 
+                          key={`tracker-${id}`} 
+                          center={[tracker.lat, tracker.lng]}
+                          pathOptions={{ color: '#6366f1', fillColor: '#6366f1', fillOpacity: 0.5, weight: 2 }} 
+                          radius={1200}
+                          className="animate-pulse"
+                        >
+                          <Popup className="custom-popup">
+                            <div className="p-1">
+                              <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Live Reporter Signal</p>
+                              <p className="text-xs font-bold text-white uppercase">{tracker.name}</p>
+                              <p className="text-[9px] text-slate-500 mt-1">Tactical intercept active...</p>
+                            </div>
+                          </Popup>
+                        </Circle>
+                      );
+                    })}
                   </MapContainer>
                 </div>
 
@@ -427,6 +475,18 @@ export default function PoliceDashboard() {
                     {p.status === 'ACTIVE' && <Circle center={[p.last_known_lat, p.last_known_lng]} pathOptions={{ color:'#2dd4bf', weight:1, dashArray:'3,6', fillOpacity:0.03 }} radius={20000}/>}
                   </React.Fragment>
                 ))}
+                {Object.keys(liveTrackers).map(id => {
+                  const tracker = liveTrackers[id];
+                  return (
+                    <Circle 
+                      key={`full-tracker-${id}`} 
+                      center={[tracker.lat, tracker.lng]}
+                      pathOptions={{ color: '#6366f1', fillColor: '#6366f1', fillOpacity: 0.5, weight: 2 }} 
+                      radius={1000}
+                      className="animate-pulse"
+                    />
+                  );
+                })}
               </MapContainer>
             </div>
           </div>

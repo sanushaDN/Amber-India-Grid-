@@ -70,9 +70,7 @@ Finally, I owe a debt of gratitude to my family for their unwavering belief in m
 
 ## ABSTRACT
 
-The proliferation of missing person cases in highly populated urban environments presents a significant challenge to law enforcement agencies, where the "Golden Hour" after a disappearance is often lost due to fragmented communication and manual verification processes. This internship report documents the development of **AMBER-India**, a mission-critical, full-stack missing person recovery platform designed to establish a real-time **Tactical Intelligence Loop** between the public and the police.
-
-Developed during a ten-week intensive internship at **Zidio Development**, AMBER-India leverages a cutting-edge technology stack comprised of **FastAPI** (Python) for asynchronous backend logic, **React 19** for an interactive high-fidelity dashboard, and **MySQL** for robust relational data persistence. The core innovation of the system lies in its dual-channel communication engine: a **Citizen-Facing Report Portal** for rapid crowdsourced sighting uploads and a **Police Command Dashboard** that utilizes **WebSockets** for sub-second alert broadcasting.
+Developed during a ten-week intensive internship at **Zidio Development**, AMBER-India leverages a cutting-edge technology stack comprised of **FastAPI** (Python) for asynchronous backend logic, **React 19** for an interactive high-fidelity dashboard, and **PostgreSQL** for robust cloud-native data persistence. The core innovation of the system lies in its triple-channel communication engine: a **Citizen-Facing PWA Portal** for rapid crowdsourced sighting uploads, a **Police Command Dashboard** for tactical intercept tracking, and a **Sovereign Alert Hub** that utilizes **WebSockets** for sub-second background broadcasting.
 
 The platform simulates advanced biometric extraction workflows to filter sighting credibility, using spatial-temporal telemetry to prioritize reports for active field dispatches. During development, critical attention was paid to system performance, ensuring that "Critical Match" alerts are delivered to officer terminals with minimal latency. 
 
@@ -157,7 +155,8 @@ The core objectives established at the beginning of the internship were:
 2.  Implement **Asynchronous Data Ingestion**: Allowing the backend to process multiple citizen reports simultaneously without performance degradation.
 3.  Develop a **Geospatial Tactical Map**: Providing officers with a visual "Heatmap" of verified sightings.
 4.  Engineer a **Sub-Second Alert Engine**: Utilizing WebSockets to push "Critical Match" notifications to police terminals without requiring a page refresh.
-5.  Ensure **Biometric Privacy**: Implementing secure data silos for sensitive case photos and PII (Personally Identifiable Information).
+5.  Develop **Real-Time Intercept Tracking (V8.0)**: Streaming live GPS pings from citizen beacons to dynamic police map markers.
+6.  Ensure **Biometric Privacy**: Implementing secure data silos for sensitive case photos and PII (Personally Identifiable Information).
 
 ---
 
@@ -228,9 +227,10 @@ For the development and testing of the recovery grid, the following hardware con
 *   **Language Environment:** Python 3.10+, Node.js 18+.
 *   **Frontend Framework:** React 19 (Beta/Latest) with Vite.
 *   **Backend Framework:** FastAPI (Uvicorn server).
-*   **Database:** MySQL 8.0 (Relational storage).
-*   **Mapping Engine:** Leaflet.js with OpenStreetMap (OSM) tiles.
-*   **Collaboration Layer:** Socket.io (for persistent full-duplex communication).
+*   **Database:** PostgreSQL (Cloud Managed).
+*   **Mapping Engine:** Leaflet.js with Tactical Dark-Mode tiles.
+*   **Real-Time Layer:** Native WebSockets for Live Intercept Signaling.
+*   **PWA Core:** Service Worker (sw.js) for background notification persistence.
 
 ### 3.3 System Requirement Specification (SRS)
 The SRS outlines the functional and non-functional requirements that define the system's behavior.
@@ -337,13 +337,16 @@ While a full production-grade AI model requires significant GPU infrastructure, 
     *   **Score 40-75%:** Classified as a "Potential Match" for manual review.
     *   **Score < 40%:** Logged but not broadcast as an alert.
 
-### 5.5 WebSocket Broadcast Architecture
-This is the "Heart" of the AMBER-India system, ensuring that law enforcement receives information exactly when it happens.
+### 5.5 Real-Time Intercept Tracking (V8.0 Upgrade)
+This module marks the transition from static reporting to active tactical interception.
+*   **The Beacon Handshake:** Once a citizen submits a sighting, the "Live Tracking" mode is activated. The system opens a dedicated WebSocket stream between the citizen's phone and the National Grid.
+*   **Intercept Signaling:** The backend relays 3-second coordinate heartbeats to all active Police Dashboards.
+*   **Tactical Mapping:** On the HQ map, reporters are displayed as pulsing indigo icons. Officers can watch these markers move in real-time as the citizen follows or monitors the missing person, facilitating perfect interception coordination.
 
-*   **Technology:** We used **Socket.io** on the frontend and the native **WebSocket** library in FastAPI.
-*   **The Hub Concept:** The server maintains an "Active Connection Register"—a list of all police browsers currently logged in.
-*   **The "Push" Event:** When the Biometric Match Engine determines a "Critical Match," the server does not wait for the police client to ask for updates. Instead, it "pushes" a JSON message titled `new_sighting_alert` to all sockets in the register.
-*   **Frontend Interruption:** The React application listens for this specific event. Upon reception, it triggers a **Global Alert Overlay** that interrupts the current screen, shows the matching photo, and highlights the location on the grid map.
+### 5.6 PWA Background Alert Engine
+To ensure the public remains vigilant without being active on the website, we implemented Progressive Web App (PWA) standards.
+*   **Service Workers:** A background script (`sw.js`) was engineered to manage grid alerts even when the browser is closed.
+*   **Native Alert Simulation:** The system includes a lock-screen notification simulator to demonstrate how the grid "force-pushes" emergency sightings to the public's mobile devices.
 
 ---
 
@@ -451,8 +454,8 @@ The following table serves as the official **Review List** of activities complet
 | **Week 6** | May 5 – May 10 | **Tactical Map Integration**: Integrated Leaflet.js and implemented coordinate-to-marker rendering logic on the grid. | Completed |
 | **Week 7** | May 12 – May 17 | **Sidebar & Customization**: Built the dynamic sidebar navigation and added theme customization for the tactical UI. | Completed |
 | **Week 8** | May 19 – May 24 | **WebSocket Alert Engine**: Engineered the Socket.io broadast hub for "Critical Match" notifications. | Completed |
-| **Week 9** | May 26 – May 31 | **Biometric Simulation**: Developed the scoring algorithm to match citizen sightings with stored case biometric vectors. | Completed |
-| **Week 10** | Jun 2 – Jun 7 | **Validation & Documentation**: Conducted system-wide testing (integration/unit) and prepared the final internship report. | Completed |
+| **Week 9** | May 26 – May 31 | **Biometric Simulation & PWA Hub**: Developed the scoring algorithm and implemented Progressive Web App standards for background alerts. | Completed |
+| **Week 10** | Jun 2 – Jun 7 | **V8.0 Tactical Intercept Tracking**: Engineered the real-time GPS beaconing system and final cloud deployment on Render.com. | Completed |
 
 ---
 

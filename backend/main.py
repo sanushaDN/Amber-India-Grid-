@@ -137,7 +137,10 @@ async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
-            data = await websocket.receive_text()
+            # Relay messages (like LIVE_COORDINATE_UPDATE) to all connected clients
+            data = await websocket.receive_json()
+            if data.get("type") == "LIVE_COORDINATE_UPDATE":
+                await manager.broadcast(data)
     except Exception:
         manager.disconnect(websocket)
 
