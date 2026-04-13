@@ -41,11 +41,12 @@ function Login() {
     formData.append("password", password);
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000); // 6 sec timeout
+    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 sec timeout for Render cold start
 
     const API_BASE = 'https://amber-backend-flng.onrender.com';
 
     try {
+      setStatusText('WAKING UP CLOUD GRID (EST. 50s)...');
       const response = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         body: formData,
@@ -64,7 +65,7 @@ function Login() {
       }
     } catch (err) {
       clearTimeout(timeoutId);
-      setError(err.name === 'AbortError' ? "Server timed out. Backend is frozen." : "Security server connection failed.");
+      setError(err.name === 'AbortError' ? "Cloud Grid is cold. Please wait 30s and try again." : "Security server connection failed.");
       setIsAuthenticating(false);
       setStatusText('AWAITING CREDENTIALS');
     }
