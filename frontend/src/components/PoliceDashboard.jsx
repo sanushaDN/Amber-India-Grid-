@@ -18,9 +18,9 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-function ChangeView({ center }) {
+function ChangeView({ center, zoom }) {
   const map = useMap();
-  useEffect(() => { map.setView(center, 5, { animate: true, duration: 1.5 }); }, [center]);
+  useEffect(() => { map.setView(center, zoom || 5, { animate: true, duration: 1.5 }); }, [center, zoom]);
   return null;
 }
 
@@ -47,6 +47,7 @@ export default function PoliceDashboard() {
   const [sightings, setSightings]         = useState([]);
   const [activeTab, setActiveTab]         = useState('bento');
   const [mapCenter, setMapCenter]         = useState([20.5937, 78.9629]);
+  const [mapZoom, setMapZoom]             = useState(5);
   const [drawer, setDrawer]               = useState(false);
   const [selectedCase, setSelectedCase]   = useState(null);
   const [caseSightings, setCaseSightings] = useState([]);
@@ -54,6 +55,7 @@ export default function PoliceDashboard() {
   const [toastMsg, setToastMsg]           = useState(null);
   const [activeAlert, setActiveAlert]     = useState(null);
   const [dispatching, setDispatching]     = useState(false);
+  const [alertLocationName, setAlertLocationName] = useState('');
   const [feed, setFeed]                   = useState([
     { msg: 'System initialized • Grid operational', type: 'info', ts: new Date() },
   ]);
@@ -61,6 +63,18 @@ export default function PoliceDashboard() {
   const [file, setFile]       = useState(null);
   const [submitting, setSub]  = useState(false);
   const [liveTrackers, setLiveTrackers] = useState({}); // { sighting_id: { lat, lng, name, ts } }
+
+  // Reverse Geocoding — convert coordinates to a place name
+  const getLocationName = async (lat, lng) => {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16`);
+      const data = await res.json();
+      const addr = data.address || {};
+      return addr.suburb || addr.city_district || addr.town || addr.city || addr.county || addr.state || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    } catch {
+      return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    }
+  };
 
   const toast = (msg, colour = 'emerald') => {
     setToastMsg({ msg, colour });
@@ -98,8 +112,12 @@ export default function PoliceDashboard() {
         setActiveAlert(d);
         setLiveCount(c => c + 1);
         setMapCenter([d.lat, d.lng]);
+        setMapZoom(15); // Zoom in close to sighting
+        setActiveTab('bento'); // Show dashboard with alert overlay
         setFeed(f => [{ msg: `🚨 MATCH ${Math.round(d.confidence)}% — Case #${d.missing_person_id}`, type: 'alert', ts: new Date() }, ...f.slice(0, 19)]);
         toast(`AI matched Case #${d.missing_person_id} at ${Math.round(d.confidence)}% confidence!`, 'amber');
+        // Get human-readable location name
+        getLocationName(d.lat, d.lng).then(name => setAlertLocationName(name));
         fetchData();
       }
       if (d.type === 'CASE_RECOVERED') {
@@ -117,6 +135,9 @@ export default function PoliceDashboard() {
             ts: Date.now()
           }
         }));
+        // Auto-center map on live tracker
+        setMapCenter([d.lat, d.lng]);
+        setMapZoom(15);
       }
     };
     
@@ -266,7 +287,7 @@ export default function PoliceDashboard() {
                   <img src={getImgUrl(activeAlert.sighting_photo)} className="w-full h-full object-cover" alt=""/>
                   <div className="absolute bottom-3 left-3 right-3 bg-rose-500/20 backdrop-blur-lg px-3 py-1.5 rounded-lg border border-rose-500/30">
                     <p className="text-[9px] font-black text-rose-100 flex items-center gap-2">
-                       <MapIcon size={9}/> {activeAlert.lat.toFixed(4)}, {activeAlert.lng.toFixed(4)}
+                       <MapIcon size={9}/> {alertLocationName || `${activeAlert.lat.toFixed(4)}, ${activeAlert.lng.toFixed(4)}`}
                     </p>
                   </div>
                 </div>
@@ -381,8 +402,8 @@ export default function PoliceDashboard() {
               <div className="col-span-5 flex flex-col gap-6">
                 <div className="flex-1 glass-panel silk-border scanline-move rounded-[32px] overflow-hidden relative shadow-2xl">
                   <div className="scanline" />
-                  <MapContainer center={mapCenter} zoom={4} className="w-full h-full grayscale-[0.2] contrast-[1.1]" zoomControl={false}>
-                    <ChangeView center={mapCenter}/>
+                  <MapContainer center={mapCenter} zoom={mapZoom} className="w-full h-full grayscale-[0.2] contrast-[1.1]" zoomControl={false}>
+                    <ChangeView center={mapCenter} zoom={mapZoom}/>
                     <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"/>
                     {active.map(p => (
                       <Marker key={p.id} position={[p.last_known_lat, p.last_known_lng]} eventHandlers={{ click: () => openTimeline(p) }}>
@@ -395,8 +416,8 @@ export default function PoliceDashboard() {
                       <Circle
                         key={`sighting-${s.id}`}
                         center={[s.sighting_lat, s.sighting_lng]}
-                        pathOptions={{ color: '#f59e0b', fillColor: '#f59e0b', fillOpacity: 0.4, weight: 2 }}
-                        radius={800}
+                        pathOptions={{ color: '#f59e0b', fillColor: '#f59e0b', fillOpacity: 0.6, weight: 3 }}
+                        radius={5000}
                       >
                         <Popup className="custom-popup">
                           <div className="p-1">
@@ -414,8 +435,8 @@ export default function PoliceDashboard() {
                         <Circle 
                           key={`tracker-${id}`} 
                           center={[tracker.lat, tracker.lng]}
-                          pathOptions={{ color: '#6366f1', fillColor: '#6366f1', fillOpacity: 0.5, weight: 2 }} 
-                          radius={1200}
+                          pathOptions={{ color: '#6366f1', fillColor: '#6366f1', fillOpacity: 0.6, weight: 3 }} 
+                          radius={5000}
                           className="animate-pulse"
                         >
                           <Popup className="custom-popup">
@@ -472,7 +493,7 @@ export default function PoliceDashboard() {
                 {active.map(p => {
                   const pri = getCasePriority(p.reported_at);
                   return (
-                    <div key={p.id} onClick={() => { setMapCenter([p.last_known_lat, p.last_known_lng]); openTimeline(p); }}
+                    <div key={p.id} onClick={() => { setMapCenter([p.last_known_lat, p.last_known_lng]); setMapZoom(14); openTimeline(p); }}
                       className="group p-3 rounded-xl cursor-pointer hover:bg-white/5 transition-all border border-transparent hover:border-white/5">
                       <div className="flex items-center gap-3">
                         <img src={getImgUrl(p.photo_path)} className="w-9 h-9 rounded-lg object-cover opacity-70 group-hover:opacity-100 transition-all" alt=""/>
@@ -487,8 +508,8 @@ export default function PoliceDashboard() {
               </div>
             </div>
             <div className="flex-1">
-              <MapContainer center={mapCenter} zoom={5} className="w-full h-full" zoomControl={true}>
-                <ChangeView center={mapCenter}/>
+              <MapContainer center={mapCenter} zoom={mapZoom} className="w-full h-full" zoomControl={true}>
+                <ChangeView center={mapCenter} zoom={mapZoom}/>
                 <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"/>
                 {persons.map(p => (
                   <React.Fragment key={p.id}>
@@ -508,8 +529,8 @@ export default function PoliceDashboard() {
                   <Circle
                     key={`full-sighting-${s.id}`}
                     center={[s.sighting_lat, s.sighting_lng]}
-                    pathOptions={{ color: '#f59e0b', fillColor: '#f59e0b', fillOpacity: 0.4, weight: 2 }}
-                    radius={800}
+                    pathOptions={{ color: '#f59e0b', fillColor: '#f59e0b', fillOpacity: 0.6, weight: 3 }}
+                    radius={5000}
                   >
                     <Popup className="custom-popup">
                       <div className="p-1">
