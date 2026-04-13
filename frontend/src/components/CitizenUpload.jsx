@@ -41,13 +41,14 @@ export default function CitizenUpload() {
   const [aiRunning, setAiRunning]       = useState(false);
   const [showBadge, setShowBadge]       = useState(false);
   const [latestSightingId, setLatestSightingId] = useState(null);
+  const [loading, setLoading]           = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${API_BASE}/missing_persons/`)
       .then(r => r.json())
-      .then(data => setMissingPersons(data.filter(p => p.status === 'ACTIVE')))
-      .catch(() => {});
+      .then(data => { setMissingPersons(data.filter(p => p.status === 'ACTIVE')); setLoading(false); })
+      .catch(() => setLoading(false));
 
     let watchId;
     if (navigator.geolocation) {
@@ -284,9 +285,22 @@ export default function CitizenUpload() {
             </div>
             {missingPersons.length === 0 ? (
               <div className="text-center py-16 text-slate-700">
-                <Activity size={32} className="mx-auto mb-3 animate-pulse"/>
-                <p className="text-sm font-black uppercase tracking-widest">Syncing with Grid...</p>
-                <p className="text-xs mt-1 text-slate-800">Establishing secure connection to HQ</p>
+                {loading ? (
+                  <>
+                    <Activity size={32} className="mx-auto mb-3 animate-pulse"/>
+                    <p className="text-sm font-black uppercase tracking-widest">Syncing with Grid...</p>
+                    <p className="text-xs mt-1 text-slate-800">Establishing secure connection to HQ</p>
+                  </>
+                ) : (
+                  <>
+                    <Shield size={32} className="mx-auto mb-3 opacity-40"/>
+                    <p className="text-sm font-black uppercase tracking-widest">No Active Cases</p>
+                    <p className="text-xs mt-2 text-slate-600 max-w-xs mx-auto">All cases on the grid are currently resolved. Check back later or contact law enforcement to register a new case.</p>
+                    <button onClick={() => navigate('/')} className="mt-6 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/10 transition-all">
+                      ← Return to Grid
+                    </button>
+                  </>
+                )}
               </div>
             ) : (
               <div className="space-y-3">
