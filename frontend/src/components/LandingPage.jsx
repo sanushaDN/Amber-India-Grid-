@@ -43,8 +43,8 @@ const LandingPage = () => {
             <div className="absolute -inset-1 bg-amber-500/20 blur rounded-full animate-pulse" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-widest text-slate-100">AMBER<span className="text-teal-400">GRID</span></h1>
-            <p className="text-[10px] tracking-widest text-slate-400 font-monouppercase">Sovereign Missing Person Network</p>
+            <h1 className="text-2xl font-bold tracking-widest text-slate-100">AMBER-<span className="text-teal-400">India</span></h1>
+            <p className="text-[10px] tracking-widest text-slate-400 font-monouppercase">National Missing Persons Portal</p>
           </div>
         </div>
         
@@ -61,19 +61,19 @@ const LandingPage = () => {
       <main className="flex-grow flex flex-col items-center justify-center text-center px-4 z-10">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-300 text-sm font-mono tracking-wider mb-8 animate-fade-in-up">
           <Activity size={14} className="animate-pulse" />
-          SYSTEM ONLINE • GLOBALLY SYNCED
+          SYSTEM ONLINE • SECURE CONNECTION
         </div>
         
         <h2 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 max-w-4xl text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-slate-500 animate-slide-up leading-tight">
           Crowdsourced Intelligence.<br/>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-indigo-500">
-            Real-Time Interception.
+            Rapid Response.
           </span>
         </h2>
         
         <p className="text-lg md:text-xl text-slate-400 max-w-2xl mb-12 font-light leading-relaxed animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-          AMBER-India is the first decentralized biometric tracking grid. 
-          Upload a live sighting to instantly ping law enforcement tactical dashboards with a 99.8% precision facial hash match.
+          AMBER-India is a centralized missing persons reporting system. 
+          Upload a live sighting with a photo to instantly notify law enforcement dashboards with a facial recognition match score.
         </p>
 
         {/* Primary Action Button */}
@@ -96,11 +96,11 @@ const LandingPage = () => {
               <div className="flex-1 text-left">
                 <div className="flex items-center gap-2 mb-4 text-amber-500">
                   <Bell size={20} className="animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] font-mono">Real-Time Broadcast Enrollment</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] font-mono">Background Alert Notifications</span>
                 </div>
-                <h3 className="text-3xl font-bold mb-4">Join the Sovereign Watch.</h3>
+                <h3 className="text-3xl font-bold mb-4">Enable Neighborhood Alerts.</h3>
                 <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                  Enroll your device in the AMBER-India national grid to receive instant, 
+                  Enroll your device in the AMBER-India national registry to receive instant, 
                   location-based push alerts even when your browser is closed. 
                   Zero latency. Infinite vigilance.
                 </p>
@@ -110,11 +110,11 @@ const LandingPage = () => {
                     className={`flex items-center gap-3 px-6 py-3 rounded-xl font-bold transition-all ${subscribed ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.1)]' : 'bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-xl active:scale-95'}`}
                   >
                     {subscribed ? <ShieldCheck size={20} /> : <Bell size={20} />}
-                    {subscribed ? 'GRID LINKED' : 'ENROLL DEVICE'}
+                    {subscribed ? 'NOTIFICATIONS ENABLED' : 'ENROLL DEVICE'}
                   </button>
                   {!subscribed && (
                     <span className="text-[10px] text-slate-600 font-black uppercase tracking-widest animate-pulse">
-                      AWAITING HANDSHAKE...
+                      AWAITING PERMISSION...
                     </span>
                   )}
                 </div>
@@ -126,7 +126,7 @@ const LandingPage = () => {
                   <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
                     <Activity size={18} className="text-amber-500" />
                   </div>
-                  <p className="text-xs font-black uppercase tracking-widest text-slate-400">Preview Background Intel</p>
+                  <p className="text-xs font-black uppercase tracking-widest text-slate-400">Preview Background Alert</p>
                   <p className="text-[10px] text-slate-600 italic">Click to simulate lock-screen alert</p>
                 </div>
               </div>
@@ -141,9 +141,9 @@ const LandingPage = () => {
             <div className="w-16 h-16 rounded-full bg-teal-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <Fingerprint size={28} className="text-teal-400" />
             </div>
-            <h3 className="text-xl font-bold mb-3 tracking-wide">Neural Biometrics</h3>
+            <h3 className="text-xl font-bold mb-3 tracking-wide">Facial Recognition</h3>
             <p className="text-slate-400 text-sm leading-relaxed text-center">
-              Our advanced DeepFace algorithm securely hashes facial coordinates instead of images, preserving privacy while ensuring perfect accuracy.
+              Our advanced algorithm securely compares uploaded photos with active missing persons records to find matches.
             </p>
           </div>
 
@@ -151,9 +151,9 @@ const LandingPage = () => {
             <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <Globe size={28} className="text-amber-400" />
             </div>
-            <h3 className="text-xl font-bold mb-3 tracking-wide">Socket Mapping</h3>
+            <h3 className="text-xl font-bold mb-3 tracking-wide">Live Mapping</h3>
             <p className="text-slate-400 text-sm leading-relaxed text-center">
-              Sightings are triangulated using GPS coordinates and pushed over WebSockets to live Tactical Dashboards without reloading.
+              Sightings are triangulated using GPS coordinates and pushed over WebSockets to Police Dashboards instantly.
             </p>
           </div>
 
@@ -161,9 +161,9 @@ const LandingPage = () => {
             <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <Search size={28} className="text-indigo-400" />
             </div>
-            <h3 className="text-xl font-bold mb-3 tracking-wide">Tactical Recovery</h3>
+            <h3 className="text-xl font-bold mb-3 tracking-wide">Secure Investigation</h3>
             <p className="text-slate-400 text-sm leading-relaxed text-center">
-              Active cases remain encrypted in an immutable SQL grid until law enforcement securely overrides the system to dispatch units.
+              Active cases remain encrypted in a secure database until law enforcement dispatches units for verification.
             </p>
           </div>
 
@@ -173,7 +173,7 @@ const LandingPage = () => {
       {/* Footer */}
       <footer className="w-full text-center py-6 border-t border-slate-800/50 mt-12 bg-slate-950/80 z-10">
         <p className="text-slate-500 text-sm font-mono tracking-wider">
-          © 2026 AMBER-India GRID • Government Internal Protocol • Sentinel Elite V7.0
+          © 2026 AMBER-India • National Missing Persons Portal • BCA Final Year Project
         </p>
       </footer>
 
@@ -190,14 +190,14 @@ const LandingPage = () => {
               <div className="notification-icon">
                 <ShieldAlert size={12} />
               </div>
-              <span className="notification-title">AMBER GRID • SYSTEM BROADCAST</span>
+              <span className="notification-title">AMBER-INDIA • SYSTEM ALERT</span>
               <span className="notification-time">1m ago</span>
             </div>
             <div className="notification-body">
-              <h4 className="notification-body-title">⚠️ AMBER ALERT: CRITICAL BROADCAST</h4>
+              <h4 className="notification-body-title">⚠️ MISSING PERSON ALERT</h4>
               <p className="notification-body-text">
-                A new missing person case has been registered in the Sovereign Grid. 
-                Intelligence indicates sightings in your proximity. Tap for biometric coordinates.
+                A new missing person case has been registered. 
+                Recent sightings reported in your proximity. Tap for details.
               </p>
             </div>
           </div>

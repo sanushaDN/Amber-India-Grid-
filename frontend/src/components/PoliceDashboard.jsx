@@ -57,7 +57,7 @@ export default function PoliceDashboard() {
   const [dispatching, setDispatching]     = useState(false);
   const [alertLocationName, setAlertLocationName] = useState('');
   const [feed, setFeed]                   = useState([
-    { msg: 'System initialized • Grid operational', type: 'info', ts: new Date() },
+    { msg: 'System initialized • Portal operational', type: 'info', ts: new Date() },
   ]);
   const [form, setForm] = useState({ full_name: '', age: '', description: '', lat: 28.6139, lng: 77.209 });
   const [file, setFile]       = useState(null);
@@ -164,7 +164,7 @@ export default function PoliceDashboard() {
     setTimeout(() => {
       setDispatching(false);
       setActiveAlert(null);
-      toast("TACTICAL UNITS DEPLOYED. GRID LOCKED.", "emerald");
+      toast("Patrol units dispatched to location.", "emerald");
     }, 2000);
   };
 
@@ -186,7 +186,7 @@ export default function PoliceDashboard() {
         body: fd
       });
       if (r.ok) {
-        toast("NEW SUBJECT SYNCED TO NATIONAL GRID", "emerald");
+        toast("New subject added to national database", "emerald");
         setDrawer(false);
         setForm({ full_name: '', age: '', description: '', lat: 28.6139, lng: 77.209 });
         setFile(null);
@@ -195,7 +195,7 @@ export default function PoliceDashboard() {
         toast("Broadcast failed. Check authorization.", "rose");
       }
     } catch {
-      toast("Grid uplink failed. Retrying...", "rose");
+      toast("Connection failed. Retrying...", "rose");
     } finally {
       setSub(false);
     }
@@ -225,14 +225,14 @@ export default function PoliceDashboard() {
             <div className="flex justify-between items-start mb-8">
               <div>
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/20 text-rose-400 rounded-full border border-rose-500/30 text-[9px] font-black uppercase tracking-widest animate-pulse">
-                    <Activity size={10}/> Biometric Match Detected
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/20 text-blue-400 rounded-full border border-blue-500/30 text-[9px] font-black uppercase tracking-widest animate-pulse">
+                    <Activity size={10}/> High Confidence Match
                   </div>
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan-500/10 text-cyan-400 rounded-full border border-cyan-500/20 text-[9px] font-black uppercase tracking-widest">
-                    <Zap size={10}/> DeepFace Neural Net
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-500/20 text-slate-400 rounded-full border border-slate-500/20 text-[9px] font-black uppercase tracking-widest">
+                    <Zap size={10}/> Facial Recognition Module
                   </div>
                 </div>
-                <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">Biometric <span className="text-cyan-400">Analysis</span></h2>
+                <h2 className="text-3xl font-black text-white italic tracking-tighter">Match <span className="text-blue-400">Results</span></h2>
               </div>
               <button onClick={() => setActiveAlert(null)} className="p-2 text-slate-500 hover:text-white transition-all"><X size={24}/></button>
             </div>
@@ -259,13 +259,13 @@ export default function PoliceDashboard() {
                 </div>
                 <div className="w-full space-y-2.5 mt-2">
                   {[
-                    { label: 'Ocular Vector', val: '94%', color: 'text-emerald-400' },
-                    { label: 'Jawline Ratio', val: '87%', color: 'text-cyan-400' },
-                    { label: 'Nasal Bridge',  val: '91%', color: 'text-emerald-400' },
-                    { label: 'Spatial Depth',  val: '78%', color: 'text-amber-400' },
+                    { label: 'Face Shape', val: '94%', color: 'text-emerald-400' },
+                    { label: 'Similarity Index', val: '87%', color: 'text-blue-400' },
+                    { label: 'Feature Alignment',  val: '91%', color: 'text-emerald-400' },
+                    { label: 'Confidence Score',  val: '78%', color: 'text-amber-400' },
                   ].map((m, i) => (
                     <div key={i} className="flex items-center justify-between">
-                      <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest neural-dot">{m.label}</span>
+                      <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest">{m.label}</span>
                       <span className={`text-[9px] font-black ${m.color} font-mono`}>{m.val}</span>
                     </div>
                   ))}
@@ -296,20 +296,20 @@ export default function PoliceDashboard() {
 
             <div className="flex items-center gap-6 p-5 bg-white/[0.03] rounded-2xl border border-white/5">
               <div className="flex-1">
-                <h4 className="text-[10px] font-black text-cyan-400 uppercase tracking-widest mb-1">Strategic Recommendation</h4>
-                <p className="text-[10px] text-slate-400 leading-relaxed">AI Confidence exceeds 70% threshold. Immediate mobilization of Alpha-8 field units is recommended for physical verification and extraction at the reported coordinates.</p>
+                <h4 className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">System Recommendation</h4>
+                <p className="text-[10px] text-slate-400 leading-relaxed">Match confidence exceeds threshold. Recommend dispatching nearest patrol unit for physical verification at the reported coordinates.</p>
               </div>
               <div className="flex gap-3 flex-shrink-0">
                 <button onClick={() => setActiveAlert(null)} className="h-12 px-6 rounded-xl border border-white/10 text-slate-500 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">Dismiss</button>
                 <button 
                   onClick={handleAuthorizeDispatch}
                   disabled={dispatching}
-                  className="h-12 px-8 rounded-xl bg-amber-500 hover:bg-amber-600 text-black text-[10px] font-black uppercase tracking-[0.2em] shadow-lg transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2">
+                  className="h-12 px-8 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black uppercase tracking-[0.1em] shadow-lg transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2">
                   {dispatching ? (
-                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   ) : (
                     <>
-                      <Zap size={14} fill="black"/> Authorize Dispatch
+                      <Zap size={14} fill="currentColor"/> Dispatch Patrol
                     </>
                   )}
                 </button>
@@ -335,8 +335,8 @@ export default function PoliceDashboard() {
           <div className="flex items-center gap-2 h-full">
             {[
               { id: 'bento', label: 'Dashboard' },
-              { id: 'map',   label: 'Grid Map' },
-              { id: 'cases', label: 'Intelligence' },
+              { id: 'map',   label: 'Map View' },
+              { id: 'cases', label: 'Reports' },
             ].map(t => (
               <button key={t.id} onClick={() => setActiveTab(t.id)}
                 className={`flex items-center px-5 h-9 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all
@@ -441,9 +441,9 @@ export default function PoliceDashboard() {
                         >
                           <Popup className="custom-popup">
                             <div className="p-1">
-                              <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Live Reporter Signal</p>
+                              <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Reporter Location</p>
                               <p className="text-xs font-bold text-white uppercase">{tracker.name}</p>
-                              <p className="text-[9px] text-slate-500 mt-1">Tactical intercept active...</p>
+                              <p className="text-[9px] text-slate-500 mt-1">Live tracking active...</p>
                             </div>
                           </Popup>
                         </Circle>
@@ -455,7 +455,7 @@ export default function PoliceDashboard() {
                 <div className="h-44 glass-panel silk-border rounded-[32px] p-6 flex flex-col">
                    <div className="flex items-center gap-2 mb-4">
                     <Radio size={14} className="text-rose-400 animate-pulse"/>
-                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Live Recovery Feed</h3>
+                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Activity Log</h3>
                   </div>
                   <div className="flex-1 space-y-2 overflow-y-auto custom-scrollbar font-mono">
                     {feed.map((f, i) => (
@@ -486,7 +486,7 @@ export default function PoliceDashboard() {
             {/* Sidebar */}
             <div className="w-72 glass-panel border-r border-white/5 flex flex-col">
               <div className="p-5 border-b border-white/5 flex items-center justify-between">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Grid Cases</span>
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Reports</span>
                 <Search size={14} className="text-slate-700"/>
               </div>
               <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
@@ -583,11 +583,11 @@ export default function PoliceDashboard() {
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="text-[10px] font-black text-slate-500 uppercase tracking-widest border-b border-white/5 bg-white/[0.02]">
-                      <th className="text-left p-6 w-[35%]">Subject Intelligence</th>
+                      <th className="text-left p-6 w-[35%]">Subject Details</th>
                       <th className="text-left p-6 w-[10%]">Age</th>
                       <th className="text-left p-6 w-[15%]">Search Priority</th>
-                      <th className="text-left p-6 w-[15%]">Grid Status</th>
-                      <th className="text-left p-6 w-[25%]">Actions & Telemetry</th>
+                      <th className="text-left p-6 w-[15%]">Status</th>
+                      <th className="text-left p-6 w-[25%]">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
@@ -847,14 +847,14 @@ function FieldUnitsCard() {
   return (
     <div className="glass-panel silk-border scanline-move rounded-[32px] p-8 bento-tile bg-gradient-to-tr from-indigo-500/5 to-transparent relative overflow-hidden min-h-[180px] flex flex-col justify-center">
       <div className="scanline" />
-      <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 block relative z-10 leading-normal">Field Units</h3>
+      <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 block relative z-10 leading-normal">Patrol Units</h3>
       <div className="flex items-end justify-between mb-6 relative z-10">
         <div className="relative top-[-4px]">
           <span className="text-4xl font-black text-white leading-none neon-glow-text">22/30</span>
           <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-3 leading-tight">Active Teams</p>
         </div>
         <div className="text-right">
-          <span className="text-emerald-400 text-[10px] font-black uppercase tracking-widest leading-none">Alpha-8</span>
+          <span className="text-emerald-400 text-[10px] font-black uppercase tracking-widest leading-none">Unit-C</span>
           <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-1 leading-none">Operational</p>
         </div>
       </div>

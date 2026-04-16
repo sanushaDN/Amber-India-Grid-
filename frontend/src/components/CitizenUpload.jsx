@@ -170,15 +170,15 @@ export default function CitizenUpload() {
           
           {/* Tactical Overlay */}
           <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap bg-teal-500 text-black px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.2em] shadow-lg animate-bounce z-20">
-            Live Signal Transmitting
+            Live Location Sharing Active
           </div>
         </div>
 
         <h1 className="text-3xl font-black text-white uppercase italic tracking-tight mb-2">
-          Intelligence <span className="text-amber-500">Secured</span>
+          Report <span className="text-amber-500">Uploaded</span>
         </h1>
         <p className="text-slate-500 text-sm max-w-xs leading-relaxed mb-1">
-          Your data has been encrypted and transmitted to the AMBER-India national grid.
+          Your data has been transmitted securely to the AMBER-India portal.
         </p>
         <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest mb-8 font-mono">
           Reference: #SIT-{Math.floor(Math.random() * 9000) + 1000}
@@ -192,11 +192,11 @@ export default function CitizenUpload() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Award size={18} className={badge.color} />
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Digital Patriot Badge</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Citizen Contributor</span>
                 </div>
                 <span className={`text-[9px] font-black uppercase tracking-widest ${badge.color}`}>{aiScore}% MATCH</span>
               </div>
-              <h3 className={`text-2xl font-black uppercase italic tracking-tight ${badge.color} ${badge.glow} mb-2`}>{badge.rank}</h3>
+              <h3 className={`text-2xl font-black uppercase italic tracking-tight ${badge.color} mb-2`}>{badge.rank}</h3>
               <p className="text-[10px] text-slate-400 leading-relaxed">{badge.desc}</p>
             </div>
           </div>
@@ -288,16 +288,16 @@ export default function CitizenUpload() {
                 {loading ? (
                   <>
                     <Activity size={32} className="mx-auto mb-3 animate-pulse"/>
-                    <p className="text-sm font-black uppercase tracking-widest">Syncing with Grid...</p>
-                    <p className="text-xs mt-1 text-slate-800">Establishing secure connection to HQ</p>
+                    <p className="text-sm font-black uppercase tracking-widest">Loading Active Reports...</p>
+                    <p className="text-xs mt-1 text-slate-800">Connecting to server</p>
                   </>
                 ) : (
                   <>
                     <Shield size={32} className="mx-auto mb-3 opacity-40"/>
                     <p className="text-sm font-black uppercase tracking-widest">No Active Cases</p>
-                    <p className="text-xs mt-2 text-slate-600 max-w-xs mx-auto">All cases on the grid are currently resolved. Check back later or contact law enforcement to register a new case.</p>
+                    <p className="text-xs mt-2 text-slate-600 max-w-xs mx-auto">All cases on the portal are currently resolved. Check back later or contact law enforcement to register a new case.</p>
                     <button onClick={() => navigate('/')} className="mt-6 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/10 transition-all">
-                      ← Return to Grid
+                      ← Return to Portal
                     </button>
                   </>
                 )}
