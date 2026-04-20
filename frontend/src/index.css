@@ -181,3 +181,35 @@ body {
 .notification-title { font-size: 11px; font-weight: 600; text-transform: uppercase; color: rgba(255,255,255,0.6); flex: 1; }
 .notification-body-title { font-size: 15px; font-weight: 600; color: white; margin-bottom: 2px; }
 .notification-body-text { font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.4; }
+
+/* ═══ PRINT STYLES FOR PDF REPORT EXPORT ═══ */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .printable-timeline, .printable-timeline * {
+    visibility: visible;
+  }
+  .printable-timeline {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .printable-timeline button {
+    display: none !important;
+  }
+  .glass-card, .glass-panel {
+    background: #f8fafc !important;
+    border: 1px solid #ccc !important;
+    color: black !important;
+  }
+  .printable-timeline p, .printable-timeline h3, .printable-timeline span {
+    color: black !important;
+  }
+}

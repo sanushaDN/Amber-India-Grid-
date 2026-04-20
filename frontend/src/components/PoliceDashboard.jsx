@@ -5,7 +5,7 @@ import L from 'leaflet';
 import {
   ShieldAlert, Map as MapIcon, Bell, LogOut, Plus, X, Upload,
   Globe, Activity, Search, CheckCircle2, Clock, AlertTriangle,
-  ChevronRight, Users, Zap, Eye, Radio, TrendingUp, Target, Wifi
+  ChevronRight, Users, Zap, Eye, Radio, TrendingUp, Target, Wifi, Download
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -98,9 +98,19 @@ export default function PoliceDashboard() {
 
   const markRecovered = async (id) => {
     const r = await fetch(`${API_BASE}/missing_persons/${id}/recover`, {
-      method: 'PATCH', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    }).catch(() => null);
-    if (r?.ok) { await fetchData(); setSelectedCase(null); }
+      method: 'PUT', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
+    if (r.ok) {
+      toast("SYSTEM UPDATE: Case marked as RECOVERED", "emerald");
+      
+      // Feature 2: Simulated SMS Notification
+      setTimeout(() => {
+        toast("SMS Dispatched: Next-of-kin notified of subject recovery.", "blue");
+      }, 1500);
+
+      setSelectedCase(null);
+      fetchData();
+    }
   };
 
   useEffect(() => {
@@ -243,7 +253,7 @@ export default function PoliceDashboard() {
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Case File Record</p>
                 <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 relative">
                   <div className="biometric-laser" />
-                  <img src={getImgUrl(activeAlert.case_photo)} className="w-full h-full object-cover" alt=""/>
+                  <img src={getImgUrl(activeAlert.case_photo)} className="w-full h-full object-cover" alt="" onError={e => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/150?text=Archived"; }}/>
                   <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
                     <p className="text-[9px] font-black text-white uppercase">{activeAlert.person_name}</p>
                   </div>
@@ -284,7 +294,7 @@ export default function PoliceDashboard() {
                 </div>
                 <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-2 border-rose-500/40 relative shadow-[0_0_40px_rgba(244,63,94,0.15)]">
                   <div className="biometric-laser" style={{ animationDelay: '1.2s' }}/>
-                  <img src={getImgUrl(activeAlert.sighting_photo)} className="w-full h-full object-cover" alt=""/>
+                  <img src={getImgUrl(activeAlert.sighting_photo)} className="w-full h-full object-cover" alt="" onError={e => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/150?text=Archived"; }}/>
                   <div className="absolute bottom-3 left-3 right-3 bg-rose-500/20 backdrop-blur-lg px-3 py-1.5 rounded-lg border border-rose-500/30">
                     <p className="text-[9px] font-black text-rose-100 flex items-center gap-2">
                        <MapIcon size={9}/> {alertLocationName || `${activeAlert.lat.toFixed(4)}, ${activeAlert.lng.toFixed(4)}`}
@@ -496,7 +506,7 @@ export default function PoliceDashboard() {
                     <div key={p.id} onClick={() => { setMapCenter([p.last_known_lat, p.last_known_lng]); setMapZoom(14); openTimeline(p); }}
                       className="group p-3 rounded-xl cursor-pointer hover:bg-white/5 transition-all border border-transparent hover:border-white/5">
                       <div className="flex items-center gap-3">
-                        <img src={getImgUrl(p.photo_path)} className="w-9 h-9 rounded-lg object-cover opacity-70 group-hover:opacity-100 transition-all" alt=""/>
+                        <img src={getImgUrl(p.photo_path)} className="w-9 h-9 rounded-lg object-cover opacity-70 group-hover:opacity-100 transition-all" alt="" onError={e => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/150?text=NA"; }}/>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-black uppercase truncate group-hover:text-cyan-400 transition-colors">{p.full_name}</p>
                           <span className={`text-[8px] font-black px-1.5 py-0.5 rounded border ${pri.cls}`}>{pri.label}</span>
@@ -666,7 +676,7 @@ export default function PoliceDashboard() {
 
       {/* ══ CASE TIMELINE PANEL ══ */}
       {selectedCase && (
-        <div className="fixed inset-0 z-[1500] flex justify-end">
+        <div className="fixed inset-0 z-[1500] flex justify-end printable-timeline">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedCase(null)}/>
           <div className="relative w-[400px] h-full bg-[#070b12] border-l border-white/10 flex flex-col animate-slide-in shadow-2xl z-[1501]">
             <div className="p-7 border-b border-white/5 flex justify-between items-start">
@@ -723,11 +733,17 @@ export default function PoliceDashboard() {
                 </div>
               )}
             </div>
-            {selectedCase.status === 'ACTIVE' && (
+            {selectedCase.status === 'ACTIVE' ? (
               <div className="p-6 border-t border-white/5">
                 <button onClick={() => markRecovered(selectedCase.id)} className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-widest text-white flex items-center justify-center gap-2 active:scale-95 transition-all"
                   style={{ background: 'linear-gradient(135deg,#10b981,#059669)', boxShadow: '0 8px 30px rgba(16,185,129,0.25)' }}>
                   <CheckCircle2 size={16}/> MARK AS RECOVERED
+                </button>
+              </div>
+            ) : (
+              <div className="p-6 border-t border-white/5">
+                <button onClick={() => window.print()} className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-widest text-white flex items-center justify-center gap-2 active:scale-95 transition-all bg-blue-600 hover:bg-blue-500 shadow-lg">
+                  <Download size={16}/> EXPORT PDF REPORT
                 </button>
               </div>
             )}

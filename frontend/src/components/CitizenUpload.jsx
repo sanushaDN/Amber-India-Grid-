@@ -312,7 +312,7 @@ export default function CitizenUpload() {
                       <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-900 border border-white/5 flex-shrink-0 relative">
                         <img src={getImgUrl(p.photo_path)} alt=""
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                          onError={e => { e.target.style.display='none'; }}/>
+                          onError={e => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/150?text=Archived"; }}/>
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-black text-sm uppercase group-hover:text-amber-400 transition-colors">{p.full_name}</p>
