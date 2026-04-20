@@ -13,13 +13,21 @@ import re
 import shutil
 import auth_utils
 from jose import JWTError, jwt
-
+import base64
 import hashlib
+
 def calculate_match_score(img1_path, img2_path):
     # Demo mock: deterministic score based on file content so same photos = same result
     combined = f"{img1_path}:{img2_path}"
     h = int(hashlib.md5(combined.encode()).hexdigest(), 16)
     return round(72 + (h % 2300) / 100, 2)  # Always 72.00 - 94.99
+
+def to_base64_url(content: bytes, filename: str) -> str:
+    """Convert image bytes to a base64 data URL stored permanently in PostgreSQL."""
+    ext = filename.rsplit('.', 1)[-1].lower() if '.' in filename else 'jpg'
+    mime = 'image/png' if ext == 'png' else 'image/gif' if ext == 'gif' else 'image/jpeg'
+    encoded = base64.b64encode(content).decode('utf-8')
+    return f"data:{mime};base64,{encoded}"
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -155,13 +163,9 @@ async def create_missing_person(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user) # PROTECTED
 ):
-    fname = safe_filename(photo.filename)
-    photo_path = f"uploads/missing_persons/{fname}"
-    
-    # Async write to prevent block
+    # Store image as base64 in PostgreSQL (persistent, no external service needed)
     content = await photo.read()
-    with open(photo_path, "wb") as buffer:
-        buffer.write(content)
+    photo_url = to_base64_url(content, photo.filename)
         
     db_person = models.MissingPerson(
         full_name=full_name,
@@ -169,7 +173,7 @@ async def create_missing_person(
         description=description,
         last_known_lat=last_known_lat,
         last_known_lng=last_known_lng,
-        photo_path=photo_path
+        photo_path=photo_url  # store the permanent Cloudinary URL
     )
     db.add(db_person)
     db.commit()
@@ -192,6 +196,7 @@ def get_all_sightings(db: Session = Depends(get_db)):
     return db.query(models.CitizenSighting).order_by(models.CitizenSighting.reported_at.desc()).all()
 
 @app.patch("/missing_persons/{person_id}/recover")
+@app.put("/missing_persons/{person_id}/recover")
 async def mark_recovered(person_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     person = db.query(models.MissingPerson).filter(models.MissingPerson.id == person_id).first()
     if not person:
@@ -219,13 +224,10 @@ async def report_sighting(
     if not person:
         raise HTTPException(status_code=404, detail="Missing person not found")
 
-    fname = safe_filename(photo.filename)
-    photo_path = f"uploads/sightings/{fname}"
-    
-    # Async write to prevent block
+    # Store image as base64 in PostgreSQL (persistent, no external service needed)
     content = await photo.read()
-    with open(photo_path, "wb") as buffer:
-        buffer.write(content)
+    photo_url = to_base64_url(content, photo.filename)
+    photo_path = photo_url  # use data url everywhere for consistency
 
     confidence_score = calculate_match_score(img1_path=person.photo_path, img2_path=photo_path)
     print(f"[AI] Match score for case #{missing_person_id}: {confidence_score}% (threshold: 70%)")

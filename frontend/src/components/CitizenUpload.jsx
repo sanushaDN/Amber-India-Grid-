@@ -21,7 +21,7 @@ const API_BASE = 'https://amber-backend-flng.onrender.com';
 // Tactical URL Resolver
 const getImgUrl = (path) => {
   if (!path) return "https://via.placeholder.com/150?text=No+Photo";
-  if (path.startsWith('http')) return path;
+  if (path.startsWith('http') || path.startsWith('data:')) return path;  // base64 or external URL
   const cleanPath = path.replace(/^\/+/, '').replace('uploads/uploads/', 'uploads/');
   return `${API_BASE}/${cleanPath}`;
 };

@@ -16,7 +16,7 @@ class MissingPerson(Base):
     description = Column(Text)
     last_known_lat = Column(Float)
     last_known_lng = Column(Float)
-    photo_path = Column(String(255))
+    photo_path = Column(Text)  # stores base64 data URL - no length limit
     status = Column(Enum(StatusEnum), default=StatusEnum.ACTIVE)
     reported_at = Column(DateTime, default=datetime.datetime.utcnow)
 
@@ -27,7 +27,7 @@ class CitizenSighting(Base):
     missing_person_id = Column(Integer)
     sighting_lat = Column(Float)
     sighting_lng = Column(Float)
-    photo_path = Column(String(255))
+    photo_path = Column(Text)  # stores base64 data URL - no length limit
     match_score = Column(Float) # From DeepFace
     reported_at = Column(DateTime, default=datetime.datetime.utcnow)
 
