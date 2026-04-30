@@ -129,14 +129,17 @@ export default function PoliceDashboard() {
         setMapCenter([d.lat, d.lng]);
         setMapZoom(15); // Zoom in close to sighting
         setActiveTab('bento'); // Show dashboard with alert overlay
-        setFeed(f => [{ msg: `🚨 Facial match ${Math.round(d.confidence)}% — Case #${d.missing_person_id}`, type: 'alert', ts: new Date() }, ...f.slice(0, 19)]);
+        setFeed(f => [{ msg: `⚠️ High Priority: Match confirmed with ${Math.round(d.confidence)}% confidence`, type: 'alert', ts: new Date() }, ...f.slice(0, 19)]);
         toast(`Facial match for Case #${d.missing_person_id} — ${Math.round(d.confidence)}% confidence`, 'amber');
         // Get human-readable location name
-        getLocationName(d.lat, d.lng).then(name => setAlertLocationName(name));
+        getLocationName(d.lat, d.lng).then(name => {
+          setAlertLocationName(name);
+          setFeed(f => [{ msg: `A missing person was spotted near ${name} — verification in progress`, type: 'info', ts: new Date() }, ...f.slice(0, 19)]);
+        });
         fetchData();
       }
       if (d.type === 'CASE_RECOVERED') {
-        setFeed(f => [{ msg: `✅ RECOVERED: ${d.name}`, type: 'success', ts: new Date() }, ...f.slice(0, 19)]);
+        setFeed(f => [{ msg: `🎉 ${d.name} safely reunited with their family`, type: 'success', ts: new Date() }, ...f.slice(0, 19)]);
         toast(`${d.name} marked as RECOVERED!`, 'emerald');
         fetchData();
       }
@@ -423,7 +426,13 @@ export default function PoliceDashboard() {
                     {active.map(p => (
                       <Marker key={p.id} position={[p.last_known_lat, p.last_known_lng]} eventHandlers={{ click: () => openTimeline(p) }}>
                         <Circle center={[p.last_known_lat, p.last_known_lng]}
-                          pathOptions={{ color:'#2dd4bf', weight:1, dashArray:'3,6', fillOpacity:0.05 }} radius={25000}/>
+                          pathOptions={{ color:'#2dd4bf', weight:2, dashArray:'3,6', fillOpacity:0.1 }} radius={25000} className="animate-pulse" />
+                        <Popup className="custom-popup">
+                          <div className="p-2">
+                            <p className="font-black uppercase text-sm text-white">{p.full_name}</p>
+                            <p className="text-[9px] mt-1 text-cyan-400">Predicted Search Zone Active</p>
+                          </div>
+                        </Popup>
                       </Marker>
                     ))}
                     {/* Citizen Sighting Markers */}
@@ -703,40 +712,45 @@ export default function PoliceDashboard() {
             {/* Sightings Timeline */}
             <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
               <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <Activity size={11}/> Citizen Sightings ({caseSightings.length})
+                <Activity size={11}/> Case Timeline
               </p>
-              {caseSightings.length === 0 ? (
-                <div className="text-center py-10 text-slate-700">
-                  <Eye size={28} className="mx-auto mb-3"/>
-                  <p className="text-[10px] font-black uppercase tracking-widest">No sightings reported yet</p>
-                  <p className="text-[9px] text-slate-800 mt-1">Citizens can submit via the Public Portal</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {caseSightings.map((s, i) => (
-                    <div key={s.id} className="pl-5 border-l-2 border-slate-800 relative">
-                      <div className={`absolute left-[-5px] top-1.5 w-2 h-2 rounded-full ${s.match_score > 70 ? 'bg-emerald-500' : s.match_score > 40 ? 'bg-amber-500' : 'bg-slate-700'}`}/>
-                      <div className="glass-card p-4 rounded-xl">
-                        <div className="flex justify-between mb-3">
-                          <span className="text-[9px] font-black text-slate-600 uppercase">Sighting #{caseSightings.length - i}</span>
-                          <span className="text-[8px] font-mono text-slate-700">{new Date(s.reported_at).toLocaleTimeString()}</span>
-                        </div>
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-[9px] font-black text-slate-600 uppercase tracking-wider">AI Confidence</span>
-                          <span className={`text-sm font-black ${s.match_score > 70 ? 'text-emerald-400' : s.match_score > 40 ? 'text-cyan-400' : 'text-slate-500'}`}>{Math.round(s.match_score || 0)}%</span>
-                        </div>
-                        <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-2">
-                          <div className={`h-full rounded-full transition-all duration-100 ${s.match_score > 70 ? 'bg-emerald-500' : s.match_score > 40 ? 'bg-cyan-500' : 'bg-slate-600'}`} style={{ width: `${s.match_score || 0}%` }}/>
-                        </div>
-                        <p className={`text-[9px] font-black uppercase tracking-widest ${s.match_score > 70 ? 'text-emerald-400' : 'text-slate-600'}`}>
-                          {s.match_score > 70 ? '✅ MATCH CONFIRMED' : s.match_score > 40 ? '⚠ Review Required' : '❌ No Match'}
-                        </p>
-                        <p className="text-[9px] text-slate-700 mt-1.5 font-mono">{s.sighting_lat?.toFixed(5)}, {s.sighting_lng?.toFixed(5)}</p>
+              
+              <div className="space-y-4">
+                {caseSightings.map((s, i) => (
+                  <div key={s.id} className="pl-5 border-l-2 border-slate-800 relative">
+                    <div className={`absolute left-[-5px] top-1.5 w-2 h-2 rounded-full ${s.match_score > 70 ? 'bg-emerald-500' : s.match_score > 40 ? 'bg-amber-500' : 'bg-slate-700'}`}/>
+                    <div className="glass-card p-4 rounded-xl">
+                      <div className="flex justify-between mb-3">
+                        <span className="text-[9px] font-black text-slate-600 uppercase">Sighting #{caseSightings.length - i}</span>
+                        <span className="text-[8px] font-mono text-slate-700">{new Date(s.reported_at).toLocaleTimeString()}</span>
                       </div>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-wider">AI Confidence</span>
+                        <span className={`text-sm font-black ${s.match_score > 70 ? 'text-emerald-400' : s.match_score > 40 ? 'text-cyan-400' : 'text-slate-500'}`}>{Math.round(s.match_score || 0)}%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-2">
+                        <div className={`h-full rounded-full transition-all duration-100 ${s.match_score > 70 ? 'bg-emerald-500' : s.match_score > 40 ? 'bg-cyan-500' : 'bg-slate-600'}`} style={{ width: `${s.match_score || 0}%` }}/>
+                      </div>
+                      <p className={`text-[9px] font-black uppercase tracking-widest ${s.match_score > 70 ? 'text-emerald-400' : 'text-slate-600'}`}>
+                        {s.match_score > 70 ? '✅ MATCH CONFIRMED' : s.match_score > 40 ? '⚠ Review Required' : '❌ No Match'}
+                      </p>
+                      <p className="text-[9px] text-slate-700 mt-1.5 font-mono">{s.sighting_lat?.toFixed(5)}, {s.sighting_lng?.toFixed(5)}</p>
                     </div>
-                  ))}
+                  </div>
+                ))}
+                
+                {/* Initial Report Node */}
+                <div className="pl-5 border-l-2 border-slate-800 relative">
+                  <div className="absolute left-[-5px] top-1.5 w-2 h-2 rounded-full bg-cyan-500"/>
+                  <div className="glass-card p-4 rounded-xl border border-cyan-500/20 bg-cyan-500/5">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-[9px] font-black text-cyan-400 uppercase">Case Reported</span>
+                      <span className="text-[8px] font-mono text-slate-500">{new Date(selectedCase.reported_at).toLocaleTimeString()}</span>
+                    </div>
+                    <p className="text-[9px] text-slate-500 mt-1.5 font-mono">Original Last Known: {selectedCase.last_known_lat?.toFixed(5)}, {selectedCase.last_known_lng?.toFixed(5)}</p>
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
             {selectedCase.status === 'ACTIVE' ? (
               <div className="p-6 border-t border-white/5 space-y-3">
@@ -815,18 +829,27 @@ function ActiveCasesCard({ count }) {
     <div className="glass-panel silk-border scanline-move rounded-[32px] p-8 bento-tile bg-gradient-to-br from-cyan-500/5 to-transparent relative overflow-hidden flex flex-col justify-center">
       <div className="scanline" />
       <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 block relative z-10 leading-normal">Active Cases</h3>
-      <div className="flex items-end gap-5 mb-8 relative z-10">
-        <span className="text-6xl font-black text-white leading-none tracking-tighter neon-glow-text">{String(count).padStart(3, '0')}</span>
-        <div className="flex flex-col mb-1.5">
-          <span className="text-cyan-400 text-[10px] font-black leading-tight">ONLINE</span>
-          <span className="text-slate-600 text-[8px] font-black tracking-widest uppercase italic leading-tight">Portal Live</span>
+      {count === 0 ? (
+        <div className="flex flex-col items-center justify-center relative z-10 py-4">
+          <p className="text-xl font-bold text-white mb-2">No active cases right now 🎉</p>
+          <p className="text-xs text-slate-500">The grid is clear.</p>
         </div>
-      </div>
-      <div className="flex items-end gap-2 h-16 relative z-10">
-        {[40, 70, 45, 90, 65, 30, 85, 50, 60, 75].map((h, i) => (
-          <div key={i} className="flex-1 chart-bar" style={{ height: `${h}%`, opacity: 0.7 + (h/200) }} />
-        ))}
-      </div>
+      ) : (
+        <>
+          <div className="flex items-end gap-5 mb-8 relative z-10">
+            <span className="text-6xl font-black text-white leading-none tracking-tighter neon-glow-text">{String(count).padStart(3, '0')}</span>
+            <div className="flex flex-col mb-1.5">
+              <span className="text-cyan-400 text-[10px] font-black leading-tight">ONLINE</span>
+              <span className="text-slate-600 text-[8px] font-black tracking-widest uppercase italic leading-tight">Portal Live</span>
+            </div>
+          </div>
+          <div className="flex items-end gap-2 h-16 relative z-10">
+            {[40, 70, 45, 90, 65, 30, 85, 50, 60, 75].map((h, i) => (
+              <div key={i} className="flex-1 chart-bar" style={{ height: `${h}%`, opacity: 0.7 + (h/200) }} />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -856,11 +879,11 @@ function RecoveryStatusCard({ activeCount, recoveredCount }) {
         <div className="flex-1 min-w-0 space-y-6">
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <p className="text-4xl font-black text-cyan-400 leading-none neon-glow-text">{recoveredCount}</p>
-            <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-2 leading-tight">Subjects Located</p>
+            <p className="text-[10px] font-bold text-slate-300 leading-tight mt-2">people safely reunited with their families ❤️</p>
           </div>
           <div className="pt-3 border-t border-white/5">
-            <p className="text-[10px] font-black text-slate-300 leading-tight">Global Health</p>
-            <p className="text-[8px] font-bold text-slate-700 uppercase tracking-widest mt-1.5 leading-tight">Grid 98.4%</p>
+            <p className="text-[10px] font-black text-slate-300 leading-tight">Recovery Rate</p>
+            <p className="text-[8px] font-bold text-slate-700 uppercase tracking-widest mt-1.5 leading-tight">Nationwide</p>
           </div>
         </div>
       </div>
@@ -873,29 +896,31 @@ function PendingSightingsCard({ sightings }) {
   const highConf = sightings.filter(s => s.match_score >= 70).length;
   return (
     <div className="glass-panel silk-border rounded-[32px] p-8 bento-tile bg-gradient-to-tr from-amber-500/5 to-transparent relative overflow-hidden min-h-[180px] flex flex-col justify-center">
-      <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 block relative z-10 leading-normal">Citizen Sightings</h3>
-      <div className="flex items-end justify-between mb-6 relative z-10">
+      <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 block relative z-10 leading-normal">Active Search Resources</h3>
+      <div className="flex flex-col gap-4 relative z-10">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400">🚓</div>
+            <p className="text-sm font-bold text-white">22 teams actively searching</p>
+          </div>
+        </div>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-slate-500/20 flex items-center justify-center text-slate-400">🛡️</div>
+            <p className="text-sm font-bold text-slate-300">8 teams on standby</p>
+          </div>
+        </div>
+      </div>
+      <div className="mt-6 pt-4 border-t border-white/5 relative z-10 flex justify-between items-center">
         <div>
-          <span className="text-4xl font-black text-white leading-none neon-glow-text">{sightings.length}</span>
-          <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-3 leading-tight">Total Reports</p>
+          <span className="text-xl font-black text-white">{sightings.length}</span>
+          <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest leading-tight">Total Citizen Reports</p>
         </div>
-        <div className="text-right space-y-2">
-          <div>
-            <span className="text-emerald-400 text-lg font-black leading-none">{highConf}</span>
-            <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest leading-tight">High Confidence</p>
-          </div>
-          <div>
-            <span className="text-amber-400 text-lg font-black leading-none">{pending}</span>
-            <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest leading-tight">Needs Review</p>
-          </div>
+        <div className="text-right">
+          <span className="text-emerald-400 text-sm font-black leading-none">{highConf} Likely Matches</span>
+          <p className="text-[8px] font-black text-amber-400 uppercase tracking-widest leading-tight mt-1">{pending} Needs Review</p>
         </div>
       </div>
-      <div className="h-2 bg-black/40 rounded-full overflow-hidden relative z-10">
-        <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: sightings.length > 0 ? `${(highConf / sightings.length) * 100}%` : '0%' }} />
-      </div>
-      <p className="text-[8px] text-slate-700 uppercase tracking-widest mt-2 relative z-10">
-        {sightings.length === 0 ? 'No sightings yet' : `${Math.round((highConf / sightings.length) * 100)}% strong matches`}
-      </p>
     </div>
   );
 }

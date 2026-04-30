@@ -39,6 +39,7 @@ export default function CitizenUpload() {
   const [showBadge, setShowBadge]             = useState(false);
   const [latestSightingId, setLatestSightingId] = useState(null);
   const [loading, setLoading]                 = useState(true);
+  const [note, setNote]                       = useState('');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -113,10 +114,9 @@ export default function CitizenUpload() {
   };
 
   const getBadgeRank = () => {
-    if (aiScore >= 85) return { rank: 'STAR WITNESS', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/30', desc: 'Excellent match! Officers have been alerted and are on their way.' };
-    if (aiScore >= 70) return { rank: 'KEY WITNESS', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', desc: 'Strong lead! Field teams are reviewing your report right now.' };
-    if (aiScore >= 50) return { rank: 'HELPFUL TIP', color: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/30', desc: 'Good sighting. Officers will review your submission shortly.' };
-    return { rank: 'THANK YOU', color: 'text-slate-400', bg: 'bg-white/5 border-white/10', desc: 'Every report matters. Your information has been logged safely.' };
+    if (aiScore >= 75) return { rank: '✅ LIKELY MATCH', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', desc: 'Excellent match! Officers have been alerted and are on their way.' };
+    if (aiScore >= 50) return { rank: '⚠️ NEEDS REVIEW', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/30', desc: 'Possible match! Field teams are reviewing your report right now.' };
+    return { rank: '❌ NOT A MATCH', color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-500/30', desc: 'This sighting has been logged, but does not appear to be a match.' };
   };
 
   useEffect(() => {
@@ -163,8 +163,7 @@ export default function CitizenUpload() {
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Award size={18} className={badge.color} />
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Citizen Contributor</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Smart Tip Verification</span>
                 </div>
                 <span className={`text-[9px] font-black uppercase tracking-widest ${badge.color}`}>{aiScore}% Match</span>
               </div>
@@ -194,7 +193,7 @@ export default function CitizenUpload() {
           </div>
         </div>
 
-        <button onClick={() => { setSuccess(false); setShowBadge(false); setStep(1); setSelectedPerson(null); setFile(null); setFilePreview(null); }}
+        <button onClick={() => { setSuccess(false); setShowBadge(false); setStep(1); setSelectedPerson(null); setFile(null); setFilePreview(null); setNote(''); }}
           className="text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-white transition-all flex items-center gap-2">
           <ArrowLeft size={12} /> Submit Another Sighting
         </button>
@@ -393,9 +392,23 @@ export default function CitizenUpload() {
               )}
               <p className={`text-[9px] font-black uppercase tracking-widest mt-3 ${aiScore >= 70 ? 'text-emerald-400' : 'text-slate-600'}`}>
                 {aiRunning ? '⏳ Comparing with case records...' :
-                  aiScore >= 70 ? '✅ Strong match — officers will be alerted automatically' :
-                  '⚠️ Possible match — an officer will review your submission'}
+                  aiScore >= 75 ? '✅ Strong match — officers will be alerted automatically' :
+                  aiScore >= 50 ? '⚠️ Possible match — an officer will review your submission' :
+                  '❌ Low match probability — sighting will still be logged'}
               </p>
+            </div>
+
+            <div className="mb-4">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2 mb-2">
+                <Radio size={12} className="text-cyan-400" /> Anonymous Note (Optional)
+              </label>
+              <textarea 
+                className="w-full bg-black/40 border border-white/5 rounded-xl p-4 text-white text-xs placeholder-slate-600 focus:border-amber-500/50 outline-none resize-none" 
+                rows="2" 
+                placeholder="Add any additional details (e.g., 'He was walking towards the station...')"
+                value={note}
+                onChange={e => setNote(e.target.value)}
+              />
             </div>
 
             {submitError && (
