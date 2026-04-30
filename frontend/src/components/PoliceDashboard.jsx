@@ -5,7 +5,7 @@ import L from 'leaflet';
 import {
   ShieldAlert, Map as MapIcon, Bell, LogOut, Plus, X, Upload,
   Globe, Activity, Search, CheckCircle2, Clock, AlertTriangle,
-  ChevronRight, Users, Zap, Eye, Radio, TrendingUp, Target, Wifi, Download
+  ChevronRight, Users, Zap, Eye, Radio, TrendingUp, Target, Wifi, Download, Share2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,7 +24,7 @@ function ChangeView({ center, zoom }) {
   return null;
 }
 
-// Tactical URL Resolver
+// Build image URL from relative path
 const getImgUrl = (path) => {
   if (!path) return "https://via.placeholder.com/150?text=No+Photo";
   // If path already starts with http, return it
@@ -81,6 +81,11 @@ export default function PoliceDashboard() {
     setTimeout(() => setToastMsg(null), 4500);
   };
 
+  const getShareUrl = (person) => {
+    const text = `🚨 MISSING PERSON ALERT 🚨\n\nName: ${person.full_name}\nAge: ${person.age} years\n\n${person.description || ''}\n\nIf you have seen this person, please report at:\nhttps://amber-india.netlify.app/report\n\n📞 1098 (Childline) or 100 (Police Emergency)`;
+    return `https://wa.me/?text=${encodeURIComponent(text)}`;
+  };
+
   const fetchData = useCallback(async () => {
     const [pRes, sRes] = await Promise.all([
       fetch(`${API_BASE}/missing_persons/`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }).catch(() => ({ ok: false })),
@@ -101,11 +106,11 @@ export default function PoliceDashboard() {
       method: 'PUT', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     });
     if (r.ok) {
-      toast("SYSTEM UPDATE: Case marked as RECOVERED", "emerald");
-      
-      // Feature 2: Simulated SMS Notification
+      toast("Case has been marked as Recovered.", "emerald");
+
+      // Simulated SMS Notification
       setTimeout(() => {
-        toast("SMS Dispatched: Next-of-kin notified of subject recovery.", "blue");
+        toast("SMS Sent: The family has been notified.", "blue");
       }, 1500);
 
       setSelectedCase(null);
@@ -124,8 +129,8 @@ export default function PoliceDashboard() {
         setMapCenter([d.lat, d.lng]);
         setMapZoom(15); // Zoom in close to sighting
         setActiveTab('bento'); // Show dashboard with alert overlay
-        setFeed(f => [{ msg: `🚨 MATCH ${Math.round(d.confidence)}% — Case #${d.missing_person_id}`, type: 'alert', ts: new Date() }, ...f.slice(0, 19)]);
-        toast(`AI matched Case #${d.missing_person_id} at ${Math.round(d.confidence)}% confidence!`, 'amber');
+        setFeed(f => [{ msg: `🚨 Facial match ${Math.round(d.confidence)}% — Case #${d.missing_person_id}`, type: 'alert', ts: new Date() }, ...f.slice(0, 19)]);
+        toast(`Facial match for Case #${d.missing_person_id} — ${Math.round(d.confidence)}% confidence`, 'amber');
         // Get human-readable location name
         getLocationName(d.lat, d.lng).then(name => setAlertLocationName(name));
         fetchData();
@@ -180,7 +185,7 @@ export default function PoliceDashboard() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (!file) return toast("Upload a subject photo", "amber");
+    if (!file) return toast("Please upload a photo of the person", "amber");
     setSub(true);
     const fd = new FormData();
     fd.append('full_name', form.full_name);
@@ -196,16 +201,16 @@ export default function PoliceDashboard() {
         body: fd
       });
       if (r.ok) {
-        toast("New subject added to national database", "emerald");
+        toast("Missing person registered successfully.", "emerald");
         setDrawer(false);
         setForm({ full_name: '', age: '', description: '', lat: 28.6139, lng: 77.209 });
         setFile(null);
         fetchData();
       } else {
-        toast("Broadcast failed. Check authorization.", "rose");
+        toast("Registration failed. Please check the form and try again.", "rose");
       }
     } catch {
-      toast("Connection failed. Retrying...", "rose");
+      toast("Could not reach the server. Please try again.", "rose");
     } finally {
       setSub(false);
     }
@@ -338,7 +343,7 @@ export default function PoliceDashboard() {
             </div>
             <div className="flex flex-col">
               <span className="text-[14px] font-black text-white leading-none tracking-tight">GOV.IN</span>
-              <span className="text-[8px] font-black text-cyan-400 leading-none uppercase tracking-widest mt-1">DBIM | AMBER Grid</span>
+              <span className="text-[8px] font-black text-cyan-400 leading-none uppercase tracking-widest mt-1">AMBER-India | Ministry of Home Affairs</span>
             </div>
           </div>
           
@@ -483,7 +488,7 @@ export default function PoliceDashboard() {
               {/* ══ COLUMN 3: METRICS & UNITS (Right) ══ */}
               <div className="col-span-4 flex flex-col gap-6 overflow-y-auto custom-scrollbar pr-1">
                 <RecoveryStatusCard activeCount={active.length} recoveredCount={recovered.length} />
-                <FieldUnitsCard />
+                <PendingSightingsCard sightings={sightings} />
               </div>
 
             </div>
@@ -665,7 +670,7 @@ export default function PoliceDashboard() {
                 {persons.length === 0 && (
                   <div className="flex flex-col items-center justify-center py-24 text-slate-700 bg-black/20">
                     <Users size={48} className="mb-4 opacity-20"/>
-                    <p className="text-sm font-black uppercase tracking-[0.2em] opacity-40">No records found in grid registry</p>
+                    <p className="text-sm font-black uppercase tracking-[0.2em] opacity-40">No cases have been registered yet.</p>
                   </div>
                 )}
               </div>
@@ -681,9 +686,9 @@ export default function PoliceDashboard() {
           <div className="relative w-[400px] h-full bg-[#070b12] border-l border-white/10 flex flex-col animate-slide-in shadow-2xl z-[1501]">
             <div className="p-7 border-b border-white/5 flex justify-between items-start">
               <div>
-                <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">Intelligence File</p>
+                <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">Case File</p>
                 <h3 className="text-lg font-black uppercase">{selectedCase.full_name}</h3>
-                <p className="text-[10px] text-slate-600 mt-1">Age {selectedCase.age} • Case-0{selectedCase.id}</p>
+                <p className="text-[10px] text-slate-600 mt-1">Age {selectedCase.age} • Case #{selectedCase.id}</p>
               </div>
               <button onClick={() => setSelectedCase(null)} className="text-slate-700 hover:text-white transition-all mt-1"><X size={22}/></button>
             </div>
@@ -698,12 +703,12 @@ export default function PoliceDashboard() {
             {/* Sightings Timeline */}
             <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
               <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <Activity size={11}/> Sightings ({caseSightings.length})
+                <Activity size={11}/> Citizen Sightings ({caseSightings.length})
               </p>
               {caseSightings.length === 0 ? (
                 <div className="text-center py-10 text-slate-700">
                   <Eye size={28} className="mx-auto mb-3"/>
-                  <p className="text-[10px] font-black uppercase tracking-widest">Awaiting field reports</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest">No sightings reported yet</p>
                   <p className="text-[9px] text-slate-800 mt-1">Citizens can submit via the Public Portal</p>
                 </div>
               ) : (
@@ -734,10 +739,14 @@ export default function PoliceDashboard() {
               )}
             </div>
             {selectedCase.status === 'ACTIVE' ? (
-              <div className="p-6 border-t border-white/5">
+              <div className="p-6 border-t border-white/5 space-y-3">
+                <a href={getShareUrl(selectedCase)} target="_blank" rel="noopener noreferrer"
+                  className="w-full py-3 rounded-xl font-black text-xs uppercase tracking-widest text-green-400 border border-green-500/20 bg-green-500/5 hover:bg-green-500/10 flex items-center justify-center gap-2 active:scale-95 transition-all">
+                  <Share2 size={14}/> Share on WhatsApp
+                </a>
                 <button onClick={() => markRecovered(selectedCase.id)} className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-widest text-white flex items-center justify-center gap-2 active:scale-95 transition-all"
                   style={{ background: 'linear-gradient(135deg,#10b981,#059669)', boxShadow: '0 8px 30px rgba(16,185,129,0.25)' }}>
-                  <CheckCircle2 size={16}/> MARK AS RECOVERED
+                  <CheckCircle2 size={16}/> Mark as Recovered
                 </button>
               </div>
             ) : (
@@ -758,8 +767,8 @@ export default function PoliceDashboard() {
           <div className="relative w-[420px] h-full bg-[#070b12] border-l border-white/10 p-9 flex flex-col z-[2001] animate-slide-in shadow-2xl">
             <button onClick={() => setDrawer(false)} className="absolute top-9 right-9 text-slate-600 hover:text-white transition-all"><X size={28}/></button>
             <div className="mb-7">
-              <h2 className="text-xl font-black uppercase italic tracking-tight">Register <span className="text-amber-400">Subject</span></h2>
-              <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest mt-1.5">Add to national recovery grid instantly</p>
+              <h2 className="text-xl font-black uppercase italic tracking-tight">Register <span className="text-amber-400">Missing Person</span></h2>
+              <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest mt-1.5">This person will appear on the public portal immediately.</p>
             </div>
             <form onSubmit={handleRegister} className="flex-1 space-y-4 overflow-y-auto pr-1 custom-scrollbar">
               {[['Full Name','text','full_name'],['Age','number','age']].map(([l,t,k]) => (
@@ -786,10 +795,10 @@ export default function PoliceDashboard() {
               <div className="relative glass-panel p-8 border-dashed border border-slate-800 hover:border-cyan-500/50 transition-all text-center rounded-2xl cursor-pointer group">
                 <input type="file" required className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => setFile(e.target.files[0])}/>
                 <Upload size={24} className="mx-auto mb-2 text-slate-700 group-hover:text-cyan-400 transition-colors"/>
-                <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">{file ? file.name : 'Upload face photo'}</p>
+                <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">{file ? file.name : 'Upload a clear photo of their face'}</p>
               </div>
               <button type="submit" disabled={submitting} className="w-full btn-premium py-4 rounded-xl font-black uppercase tracking-widest text-white text-[11px] disabled:opacity-40">
-                {submitting ? 'BROADCASTING...' : 'CONFIRM BROADCAST'}
+                {submitting ? 'Registering...' : 'Register Person'}
               </button>
             </form>
           </div>
@@ -809,8 +818,8 @@ function ActiveCasesCard({ count }) {
       <div className="flex items-end gap-5 mb-8 relative z-10">
         <span className="text-6xl font-black text-white leading-none tracking-tighter neon-glow-text">{String(count).padStart(3, '0')}</span>
         <div className="flex flex-col mb-1.5">
-          <span className="text-cyan-400 text-[10px] font-black leading-tight">SYSTEM LIVE</span>
-          <span className="text-slate-600 text-[8px] font-black tracking-widest uppercase italic leading-tight">Node Grid Active</span>
+          <span className="text-cyan-400 text-[10px] font-black leading-tight">ONLINE</span>
+          <span className="text-slate-600 text-[8px] font-black tracking-widest uppercase italic leading-tight">Portal Live</span>
         </div>
       </div>
       <div className="flex items-end gap-2 h-16 relative z-10">
@@ -859,28 +868,34 @@ function RecoveryStatusCard({ activeCount, recoveredCount }) {
   );
 }
 
-function FieldUnitsCard() {
+function PendingSightingsCard({ sightings }) {
+  const pending = sightings.filter(s => s.match_score < 70).length;
+  const highConf = sightings.filter(s => s.match_score >= 70).length;
   return (
-    <div className="glass-panel silk-border scanline-move rounded-[32px] p-8 bento-tile bg-gradient-to-tr from-indigo-500/5 to-transparent relative overflow-hidden min-h-[180px] flex flex-col justify-center">
-      <div className="scanline" />
-      <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 block relative z-10 leading-normal">Patrol Units</h3>
+    <div className="glass-panel silk-border rounded-[32px] p-8 bento-tile bg-gradient-to-tr from-amber-500/5 to-transparent relative overflow-hidden min-h-[180px] flex flex-col justify-center">
+      <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 block relative z-10 leading-normal">Citizen Sightings</h3>
       <div className="flex items-end justify-between mb-6 relative z-10">
-        <div className="relative top-[-4px]">
-          <span className="text-4xl font-black text-white leading-none neon-glow-text">22/30</span>
-          <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-3 leading-tight">Active Teams</p>
+        <div>
+          <span className="text-4xl font-black text-white leading-none neon-glow-text">{sightings.length}</span>
+          <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-3 leading-tight">Total Reports</p>
         </div>
-        <div className="text-right">
-          <span className="text-emerald-400 text-[10px] font-black uppercase tracking-widest leading-none">Unit-C</span>
-          <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-1 leading-none">Operational</p>
+        <div className="text-right space-y-2">
+          <div>
+            <span className="text-emerald-400 text-lg font-black leading-none">{highConf}</span>
+            <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest leading-tight">High Confidence</p>
+          </div>
+          <div>
+            <span className="text-amber-400 text-lg font-black leading-none">{pending}</span>
+            <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest leading-tight">Needs Review</p>
+          </div>
         </div>
       </div>
-      {/* Mock Wave Chart */}
-      <div className="h-12 w-full flex items-center gap-1 overflow-hidden opacity-30 relative z-10">
-        {Array.from({ length: 50 }).map((_, i) => (
-          <div key={i} className="flex-1 bg-cyan-400 rounded-full" 
-            style={{ height: `${30 + Math.sin(i * 0.4) * 20 + Math.random() * 10}%` }} />
-        ))}
+      <div className="h-2 bg-black/40 rounded-full overflow-hidden relative z-10">
+        <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: sightings.length > 0 ? `${(highConf / sightings.length) * 100}%` : '0%' }} />
       </div>
+      <p className="text-[8px] text-slate-700 uppercase tracking-widest mt-2 relative z-10">
+        {sightings.length === 0 ? 'No sightings yet' : `${Math.round((highConf / sightings.length) * 100)}% strong matches`}
+      </p>
     </div>
   );
 }
