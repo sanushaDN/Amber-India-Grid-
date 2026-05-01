@@ -58,7 +58,7 @@ const LandingPage = () => {
   };
 
   const getWhatsAppUrl = (person) => {
-    const text = `🚨 MISSING PERSON ALERT 🚨\n\nName: ${person.full_name}\nAge: ${person.age} years\nMissing: ${getDaysMissing(person.reported_at)}\n\n${person.description || ''}\n\nIf you have seen this person, please report at:\nhttps://amber-india.netlify.app/report\n\n📞 Call 1098 (Childline) or 100 (Police Emergency)\n\nEvery tip helps bring them home.`;
+    const text = `🚨 MISSING PERSON ALERT 🚨\n\nName: ${person.full_name}\nAge: ${person.age} years\nMissing: ${getDaysMissing(person.reported_at)}\n\n${person.description || ''}\n\nIf you have seen this person, please report at:\nhttps://amber-india.netlify.app/report\n\n📞 Call 1098 (Childline) or 100 (Police Emergency)\n\nPlease report any information immediately.`;
     return `https://wa.me/?text=${encodeURIComponent(text)}`;
   };
 
@@ -94,8 +94,8 @@ const LandingPage = () => {
           Available 24/7 • Helping Families
         </div>
         <h2 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 max-w-4xl text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-slate-500 animate-fade-in-up leading-tight">
-          Every Second Counts.<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-indigo-500">Every Eye Helps.</span>
+          National Missing Person<br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-indigo-500">Identification System</span>
         </h2>
         <p className="text-lg md:text-xl text-slate-400 max-w-2xl mb-10 font-light leading-relaxed animate-fade-in-up" style={{ animationDelay: '200ms' }}>
           AMBER-India is India's centralised missing persons reporting system. If you've spotted someone, upload a photo — our system will instantly notify law enforcement with a facial match score.
@@ -105,7 +105,7 @@ const LandingPage = () => {
             className="group relative px-8 py-4 bg-teal-500 hover:bg-teal-400 text-teal-950 font-bold text-lg rounded-xl flex items-center justify-center gap-3 transition-all hover:scale-105 hover:shadow-[0_0_40px_-5px_rgba(45,212,191,0.5)] overflow-hidden">
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             <ScanFace className="relative z-10" />
-            <span className="relative z-10">I Think I Saw Someone</span>
+            <span className="relative z-10">Report a Sighting</span>
             <ChevronRight className="relative z-10 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
@@ -114,7 +114,7 @@ const LandingPage = () => {
         <div className="w-full max-w-6xl mt-24 text-left animate-fade-in-up" style={{ animationDelay: '500ms' }}>
           <div className="flex items-end justify-between mb-6">
             <div>
-              <h3 className="text-2xl font-bold text-white">Who Are We Looking For?</h3>
+              <h3 className="text-2xl font-bold text-white">Active Missing Person Records</h3>
               <p className="text-slate-400 text-sm mt-1">These people are currently missing. Do you recognise anyone? Please report immediately.</p>
             </div>
             {missingPersons.length > 0 && (
@@ -164,7 +164,7 @@ const LandingPage = () => {
                       <div className="flex gap-2 mt-auto pt-2">
                         <button onClick={() => navigate(`/report?personId=${person.id}`)}
                           className="flex-1 py-2 bg-teal-500/10 hover:bg-teal-500 border border-teal-500/30 text-teal-400 hover:text-teal-950 text-[11px] font-bold rounded-lg transition-all">
-                          I Saw Them
+                          Report Sighting
                         </button>
                         <a href={getWhatsAppUrl(person)} target="_blank" rel="noopener noreferrer"
                           className="p-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg transition-all flex items-center justify-center" title="Share on WhatsApp">

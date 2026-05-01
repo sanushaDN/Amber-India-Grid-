@@ -129,17 +129,17 @@ export default function PoliceDashboard() {
         setMapCenter([d.lat, d.lng]);
         setMapZoom(15); // Zoom in close to sighting
         setActiveTab('bento'); // Show dashboard with alert overlay
-        setFeed(f => [{ msg: `⚠️ High Priority: Match confirmed with ${Math.round(d.confidence)}% confidence`, type: 'alert', ts: new Date() }, ...f.slice(0, 19)]);
+        setFeed(f => [{ msg: `ALERT: Match confirmed with ${Math.round(d.confidence)}% confidence`, type: 'alert', ts: new Date() }, ...f.slice(0, 19)]);
         toast(`Facial match for Case #${d.missing_person_id} — ${Math.round(d.confidence)}% confidence`, 'amber');
         // Get human-readable location name
         getLocationName(d.lat, d.lng).then(name => {
           setAlertLocationName(name);
-          setFeed(f => [{ msg: `A missing person was spotted near ${name} — verification in progress`, type: 'info', ts: new Date() }, ...f.slice(0, 19)]);
+          setFeed(f => [{ msg: `Sighting reported near ${name}`, type: 'info', ts: new Date() }, ...f.slice(0, 19)]);
         });
         fetchData();
       }
       if (d.type === 'CASE_RECOVERED') {
-        setFeed(f => [{ msg: `🎉 ${d.name} safely reunited with their family`, type: 'success', ts: new Date() }, ...f.slice(0, 19)]);
+        setFeed(f => [{ msg: `${d.name} marked as recovered.`, type: 'success', ts: new Date() }, ...f.slice(0, 19)]);
         toast(`${d.name} marked as RECOVERED!`, 'emerald');
         fetchData();
       }
@@ -831,8 +831,8 @@ function ActiveCasesCard({ count }) {
       <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 block relative z-10 leading-normal">Active Cases</h3>
       {count === 0 ? (
         <div className="flex flex-col items-center justify-center relative z-10 py-4">
-          <p className="text-xl font-bold text-white mb-2">No active cases right now 🎉</p>
-          <p className="text-xs text-slate-500">The grid is clear.</p>
+          <p className="text-xl font-bold text-white mb-2">No active cases found.</p>
+          <p className="text-xs text-slate-500">Database empty.</p>
         </div>
       ) : (
         <>
@@ -879,7 +879,7 @@ function RecoveryStatusCard({ activeCount, recoveredCount }) {
         <div className="flex-1 min-w-0 space-y-6">
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <p className="text-4xl font-black text-cyan-400 leading-none neon-glow-text">{recoveredCount}</p>
-            <p className="text-[10px] font-bold text-slate-300 leading-tight mt-2">people safely reunited with their families ❤️</p>
+            <p className="text-[10px] font-bold text-slate-300 leading-tight mt-2">Recovered Subjects</p>
           </div>
           <div className="pt-3 border-t border-white/5">
             <p className="text-[10px] font-black text-slate-300 leading-tight">Recovery Rate</p>
@@ -900,14 +900,14 @@ function PendingSightingsCard({ sightings }) {
       <div className="flex flex-col gap-4 relative z-10">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400">🚓</div>
-            <p className="text-sm font-bold text-white">22 teams actively searching</p>
+            <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400">P</div>
+            <p className="text-sm font-bold text-white">Active Patrol Teams: 22</p>
           </div>
         </div>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-slate-500/20 flex items-center justify-center text-slate-400">🛡️</div>
-            <p className="text-sm font-bold text-slate-300">8 teams on standby</p>
+            <div className="w-8 h-8 rounded-full bg-slate-500/20 flex items-center justify-center text-slate-400">S</div>
+            <p className="text-sm font-bold text-slate-300">Standby Teams: 8</p>
           </div>
         </div>
       </div>

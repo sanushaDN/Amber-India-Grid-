@@ -246,7 +246,7 @@ export default function CitizenUpload() {
           <div className="animate-fade-in-up">
             <div className="mb-8">
               <h1 className="text-2xl font-black uppercase tracking-tight italic">
-                Who did you <span className="text-amber-400">see?</span>
+                Select <span className="text-amber-400">Subject</span>
               </h1>
               <p className="text-slate-500 text-xs mt-2 font-bold uppercase tracking-widest">Select the person you believe you spotted</p>
             </div>
@@ -303,7 +303,7 @@ export default function CitizenUpload() {
         {step === 2 && (
           <div className="animate-fade-in-up">
             <div className="mb-8">
-              <h1 className="text-2xl font-black uppercase tracking-tight italic">Take a <span className="text-amber-400">Photo</span></h1>
+              <h1 className="text-2xl font-black uppercase tracking-tight italic">Upload <span className="text-amber-400">Image</span></h1>
               <p className="text-slate-500 text-xs mt-2 font-bold uppercase tracking-widest">Take or upload a clear photo of the person you saw</p>
             </div>
             <div className="flex items-center gap-3 glass-panel p-4 rounded-xl border border-amber-500/20 mb-6">
@@ -331,7 +331,7 @@ export default function CitizenUpload() {
         {step === 3 && (
           <div className="animate-fade-in-up">
             <div className="mb-8">
-              <h1 className="text-2xl font-black uppercase tracking-tight italic">Review & <span className="text-teal-400">Submit</span></h1>
+              <h1 className="text-2xl font-black uppercase tracking-tight italic">Submit <span className="text-teal-400">Sighting</span></h1>
               <p className="text-slate-500 text-xs mt-2 font-bold uppercase tracking-widest">Check your details before submitting</p>
             </div>
 
@@ -392,9 +392,9 @@ export default function CitizenUpload() {
               )}
               <p className={`text-[9px] font-black uppercase tracking-widest mt-3 ${aiScore >= 70 ? 'text-emerald-400' : 'text-slate-600'}`}>
                 {aiRunning ? '⏳ Comparing with case records...' :
-                  aiScore >= 75 ? '✅ Strong match — officers will be alerted automatically' :
-                  aiScore >= 50 ? '⚠️ Possible match — an officer will review your submission' :
-                  '❌ Low match probability — sighting will still be logged'}
+                  aiScore >= 75 ? 'HIGH MATCH PROBABILITY — ALERT SENT TO AUTHORITIES' :
+                  aiScore >= 50 ? 'THRESHOLD PARTIALLY MET — PENDING VERIFICATION' :
+                  'SCORE BELOW THRESHOLD — SIGHTING ARCHIVED'}
               </p>
             </div>
 
@@ -424,7 +424,7 @@ export default function CitizenUpload() {
               {uploading ? (
                 <><div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" /> Submitting...</>
               ) : aiRunning ? ('Please wait...') : (
-                <><Radio size={16} /> Submit My Sighting</>
+                <><Radio size={16} /> Submit Sighting</>
               )}
             </button>
             <button onClick={() => setStep(2)} className="w-full mt-3 py-3 text-slate-600 hover:text-slate-400 text-[10px] font-black uppercase tracking-widest transition-all">
