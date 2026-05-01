@@ -181,10 +181,10 @@ const LandingPage = () => {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { number: '1098', label: 'Childline', desc: 'Missing children', color: 'text-amber-400 border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10' },
-                { number: '100', label: 'Police Emergency', desc: 'Nearest station', color: 'text-blue-400 border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10' },
-                { number: '1094', label: 'Women Helpline', desc: 'Missing women', color: 'text-pink-400 border-pink-500/20 bg-pink-500/5 hover:bg-pink-500/10' },
-                { number: '112', label: 'National Emergency', desc: 'All emergencies', color: 'text-rose-400 border-rose-500/20 bg-rose-500/5 hover:bg-rose-500/10' },
+                { number: '1098', label: 'Childline', desc: 'Missing children', color: 'text-amber-700 border-amber-200 bg-amber-50 hover:bg-amber-100' },
+                { number: '100', label: 'Police Emergency', desc: 'Nearest station', color: 'text-blue-700 border-blue-200 bg-blue-50 hover:bg-blue-100' },
+                { number: '1094', label: 'Women Helpline', desc: 'Missing women', color: 'text-pink-700 border-pink-200 bg-pink-50 hover:bg-pink-100' },
+                { number: '112', label: 'National Emergency', desc: 'All emergencies', color: 'text-rose-700 border-rose-200 bg-rose-50 hover:bg-rose-100' },
               ].map(h => (
                 <a key={h.number} href={`tel:${h.number}`}
                   className={`flex flex-col items-center p-4 rounded-xl border text-center transition-all hover:scale-105 cursor-pointer ${h.color}`}>
@@ -199,35 +199,34 @@ const LandingPage = () => {
 
         {/* ── NOTIFICATION ENROLMENT ── */}
         <div className="mt-16 w-full max-w-4xl animate-fade-in-up" style={{ animationDelay: '600ms' }}>
-          <div className="glass-panel p-1 border border-white/5 bg-white/[0.02]">
+          <div className="bg-white rounded-2xl p-1 border border-gray-200 shadow-sm">
             <div className="flex flex-col md:flex-row items-center gap-8 p-8 py-10">
               <div className="flex-1 text-left">
-                <div className="flex items-center gap-2 mb-4 text-amber-500">
+                <div className="flex items-center gap-2 mb-4 text-blue-600">
                   <Bell size={20} className="animate-pulse" />
                   <span className="text-[10px] font-black uppercase tracking-[0.3em] font-mono">Background Alert Notifications</span>
                 </div>
                 <h3 className="text-3xl font-bold mb-4">Enable Neighbourhood Alerts.</h3>
-                <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                <p className="text-gray-500 text-sm leading-relaxed mb-6">
                   Get instant push alerts when a missing person is reported near you — even when your browser is closed. Stay informed. Help bring someone home.
                 </p>
                 <div className="flex items-center gap-4">
                   <button onClick={toggleSubscription}
-                    className={`flex items-center gap-3 px-6 py-3 rounded-xl font-bold transition-all ${subscribed ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/10 hover:bg-white/20 text-white border border-white/10 active:scale-95'}`}>
+                    className={`flex items-center gap-3 px-6 py-3 rounded-xl font-bold transition-all ${subscribed ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-300 active:scale-95'}`}>
                     {subscribed ? <ShieldCheck size={20} /> : <Bell size={20} />}
                     {subscribed ? 'Alerts Enabled ✓' : 'Enable Alerts'}
                   </button>
-                  {!subscribed && <span className="text-[10px] text-slate-600 font-bold">Click above to allow notifications</span>}
+                  {!subscribed && <span className="text-[10px] text-gray-500 font-bold">Click above to allow notifications</span>}
                 </div>
               </div>
-              <div className="w-full md:w-[320px] h-[160px] rounded-2xl bg-black/40 border border-white/5 relative overflow-hidden flex flex-col items-center justify-center p-6 text-center group cursor-pointer" onClick={triggerDemo}>
-                <div className="scanline" />
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="w-full md:w-[320px] h-[160px] rounded-2xl bg-gray-50 border border-gray-200 relative overflow-hidden flex flex-col items-center justify-center p-6 text-center group cursor-pointer" onClick={triggerDemo}>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative z-10 flex flex-col items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
-                    <Activity size={18} className="text-amber-500" />
+                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border border-blue-200">
+                    <Activity size={18} className="text-blue-600" />
                   </div>
-                  <p className="text-xs font-bold text-slate-400">Preview a Sample Alert</p>
-                  <p className="text-[10px] text-slate-600 italic">Click to see what the notification looks like</p>
+                  <p className="text-xs font-bold text-gray-700">Preview a Sample Alert</p>
+                  <p className="text-[10px] text-gray-500 italic">Click to see what the notification looks like</p>
                 </div>
               </div>
             </div>
@@ -236,33 +235,33 @@ const LandingPage = () => {
 
         {/* Feature Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mt-16 animate-fade-in-up" style={{ animationDelay: '700ms' }}>
-          <div className="flex flex-col items-center p-8 rounded-2xl bg-slate-900/40 border border-slate-700/50 hover:bg-slate-800/50 hover:border-teal-500/30 transition-colors group">
-            <div className="w-16 h-16 rounded-full bg-teal-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Fingerprint size={28} className="text-teal-400" />
+          <div className="flex flex-col items-center p-8 rounded-2xl bg-white border border-gray-200 hover:bg-gray-50 hover:border-teal-300 transition-colors shadow-sm group">
+            <div className="w-16 h-16 rounded-full bg-teal-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <Fingerprint size={28} className="text-teal-600" />
             </div>
             <h3 className="text-xl font-bold mb-3">Facial Recognition</h3>
-            <p className="text-slate-400 text-sm leading-relaxed text-center">Your photo is automatically compared against active missing person records to find a match.</p>
+            <p className="text-gray-500 text-sm leading-relaxed text-center">Your photo is automatically compared against active missing person records to find a match.</p>
           </div>
-          <div className="flex flex-col items-center p-8 rounded-2xl bg-slate-900/40 border border-slate-700/50 hover:bg-slate-800/50 hover:border-amber-500/30 transition-colors group">
-            <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Globe size={28} className="text-amber-400" />
+          <div className="flex flex-col items-center p-8 rounded-2xl bg-white border border-gray-200 hover:bg-gray-50 hover:border-amber-300 transition-colors shadow-sm group">
+            <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <Globe size={28} className="text-amber-600" />
             </div>
             <h3 className="text-xl font-bold mb-3">Live Mapping</h3>
-            <p className="text-slate-400 text-sm leading-relaxed text-center">Sightings are plotted on a live map and pushed directly to officer dashboards the moment you submit.</p>
+            <p className="text-gray-500 text-sm leading-relaxed text-center">Sightings are plotted on a live map and pushed directly to officer dashboards the moment you submit.</p>
           </div>
-          <div className="flex flex-col items-center p-8 rounded-2xl bg-slate-900/40 border border-slate-700/50 hover:bg-slate-800/50 hover:border-indigo-500/30 transition-colors group">
-            <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Search size={28} className="text-indigo-400" />
+          <div className="flex flex-col items-center p-8 rounded-2xl bg-white border border-gray-200 hover:bg-gray-50 hover:border-indigo-300 transition-colors shadow-sm group">
+            <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <Search size={28} className="text-indigo-600" />
             </div>
             <h3 className="text-xl font-bold mb-3">Safe & Confidential</h3>
-            <p className="text-slate-400 text-sm leading-relaxed text-center">Your identity and location are kept private. Only authorised law enforcement officers can see your report.</p>
+            <p className="text-gray-500 text-sm leading-relaxed text-center">Your identity and location are kept private. Only authorised law enforcement officers can see your report.</p>
           </div>
         </div>
       </main>
 
-      <footer className="w-full text-center py-6 border-t border-slate-800/50 mt-12 bg-slate-950/80 z-10">
-        <p className="text-slate-500 text-sm font-mono tracking-wider">© 2026 AMBER-India • National Missing Persons Portal • Ministry of Home Affairs</p>
-        <p className="text-slate-700 text-xs mt-1">In an emergency, call <span className="text-rose-500 font-bold">112</span> or Childline <span className="text-amber-500 font-bold">1098</span></p>
+      <footer className="w-full text-center py-6 border-t border-gray-200 mt-12 bg-gray-50 z-10">
+        <p className="text-gray-500 text-sm font-mono tracking-wider">© 2026 AMBER-India • National Missing Persons Portal • Ministry of Home Affairs</p>
+        <p className="text-gray-600 text-xs mt-1">In an emergency, call <span className="text-red-600 font-bold">112</span> or Childline <span className="text-blue-600 font-bold">1098</span></p>
       </footer>
 
       {/* Lock Screen Demo Overlay */}
