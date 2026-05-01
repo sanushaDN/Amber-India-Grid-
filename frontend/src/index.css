@@ -24,6 +24,41 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* OVERRIDES FOR LEFTOVER DARK MODE CLASSES */
+.text-white, .text-slate-100, .text-slate-200, .text-slate-300 {
+  color: var(--text-main) !important;
+}
+
+.text-slate-400, .text-slate-500, .text-slate-600 {
+  color: var(--text-muted) !important;
+}
+
+.bg-\[\#070b12\] {
+  background-color: var(--bg-panel) !important;
+}
+
+.bg-slate-900, .bg-slate-800 {
+  background-color: var(--bg-dark) !important;
+  border-color: var(--border-light) !important;
+}
+
+.bg-transparent {
+  background-color: transparent !important;
+}
+
+.border-white\/5, .border-white\/10, .border-white\/20 {
+  border-color: var(--border-light) !important;
+}
+
+.bg-white\/5, .bg-white\/10 {
+  background-color: #f3f4f6 !important; /* gray-100 */
+}
+
+/* Ensure headings are dark */
+h1, h2, h3, h4, h5, p, span, div, label {
+  text-shadow: none !important;
+}
+
 /* ═══ CLEAN SCROLLBARS ═══ */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #f1f1f1; }

@@ -224,8 +224,7 @@ export default function PoliceDashboard() {
   const critical  = active.filter(p => (Date.now() - new Date(p.reported_at)) / 3600000 > 24);
 
   return (
-    <div className="h-screen w-screen bg-transparent text-slate-100 flex flex-col font-sans overflow-hidden relative">
-      <div className="security-grid" />
+    <div className="h-screen w-screen bg-gray-50 text-gray-900 flex flex-col font-sans overflow-hidden relative">
 
       {toastMsg && (
         <div className={`fixed top-6 right-6 z-[9999] animate-slide-in px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl flex items-center gap-3
@@ -337,16 +336,16 @@ export default function PoliceDashboard() {
         </div>
       )}
 
-      <header className="h-16 flex-shrink-0 gov-banner flex items-center justify-between px-8 z-50">
+      <header className="h-16 flex-shrink-0 bg-white border-b border-gray-200 flex items-center justify-between px-8 z-50">
         <div className="flex items-center gap-10 h-full">
-          <div className="flex items-center gap-4 border-r border-white/10 pr-8 h-8">
+          <div className="flex items-center gap-4 border-r border-gray-200 pr-8 h-8">
             <div className="flex flex-col items-center justify-center">
-              <ShieldAlert size={20} className="text-white"/>
-              <span className="text-[5px] font-black uppercase tracking-[0.2em] mt-0.5 opacity-50">सत्यमेव जयते</span>
+              <ShieldAlert size={20} className="text-blue-600"/>
+              <span className="text-[5px] font-black uppercase tracking-[0.2em] mt-0.5 text-gray-500">सत्यमेव जयते</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[14px] font-black text-white leading-none tracking-tight">GOV.IN</span>
-              <span className="text-[8px] font-black text-cyan-400 leading-none uppercase tracking-widest mt-1">AMBER-India | Ministry of Home Affairs</span>
+              <span className="text-[14px] font-black text-gray-900 leading-none tracking-tight">GOV.IN</span>
+              <span className="text-[8px] font-black text-blue-600 leading-none uppercase tracking-widest mt-1">AMBER-India | Ministry of Home Affairs</span>
             </div>
           </div>
           
@@ -358,7 +357,7 @@ export default function PoliceDashboard() {
             ].map(t => (
               <button key={t.id} onClick={() => setActiveTab(t.id)}
                 className={`flex items-center px-5 h-9 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all
-                  ${activeTab === t.id ? 'bg-white/10 text-white border border-white/20' : 'text-white/40 hover:text-white/70 hover:bg-white/5'}`}>
+                  ${activeTab === t.id ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}`}>
                 {t.label}
               </button>
             ))}
@@ -366,25 +365,25 @@ export default function PoliceDashboard() {
         </div>
 
         <div className="hidden lg:flex items-center relative w-[400px]">
-          <Search size={14} className="absolute left-4 text-white/30"/>
+          <Search size={14} className="absolute left-4 text-gray-400"/>
           <input type="text" placeholder="Namaste! What can I find for you today?"
-            className="w-full bg-white/5 border border-white/10 rounded-full py-2.5 pl-11 pr-4 text-[11px] text-white placeholder-white/20 focus:outline-none focus:bg-white/10 transition-all"/>
+            className="w-full bg-gray-50 border border-gray-200 rounded-full py-2.5 pl-11 pr-4 text-[11px] text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-blue-300 transition-all"/>
         </div>
 
         <div className="flex items-center gap-6 h-full">
           {liveCount > 0 && (
-            <div className="flex items-center gap-2 bg-rose-500/20 border border-rose-500/30 text-rose-200 px-4 h-8 rounded-full text-[9px] font-black uppercase tracking-[0.2em] animate-pulse">
+            <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 px-4 h-8 rounded-full text-[9px] font-black uppercase tracking-[0.2em] animate-pulse">
               {liveCount} UNRESOLVED ALERTS
             </div>
           )}
           
-          <button onClick={() => setDrawer(true)} className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-black font-black px-6 h-9 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_4px_15px_rgba(245,158,11,0.3)]">
+          <button onClick={() => setDrawer(true)} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-black px-6 h-9 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-sm">
             <Plus size={14} strokeWidth={3}/> Register Case
           </button>
           
-          <div className="flex items-center gap-1 border-l border-white/10 pl-4">
-            <button onClick={() => navigate('/report')} className="p-2 text-white/40 hover:text-white transition-all"><Globe size={18}/></button>
-            <button onClick={() => { localStorage.removeItem('token'); navigate('/login'); }} className="p-2 text-white/40 hover:text-rose-400 transition-all"><LogOut size={18}/></button>
+          <div className="flex items-center gap-1 border-l border-gray-200 pl-4">
+            <button onClick={() => navigate('/report')} className="p-2 text-gray-500 hover:text-blue-600 transition-all"><Globe size={18}/></button>
+            <button onClick={() => { localStorage.removeItem('token'); navigate('/login'); }} className="p-2 text-gray-500 hover:text-red-500 transition-all"><LogOut size={18}/></button>
           </div>
         </div>
       </header>
@@ -395,21 +394,21 @@ export default function PoliceDashboard() {
             <div className="grid grid-cols-12 gap-6 h-full">
               <div className="col-span-3 flex flex-col gap-6 overflow-y-auto custom-scrollbar pr-1">
                 <ActiveCasesCard count={active.length} />
-                <div className="glass-panel silk-border rounded-[32px] p-6 flex-1 flex flex-col min-h-0">
+                <div className="bg-white border border-gray-200 shadow-sm rounded-3xl p-6 flex-1 flex flex-col min-h-0">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                      <AlertTriangle size={12} className="text-rose-400"/> Critical Alerts
+                    <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                      <AlertTriangle size={12} className="text-red-500"/> Critical Alerts
                     </h3>
                   </div>
                   <div className="flex-1 space-y-4 overflow-y-auto custom-scrollbar">
                     {critical.map(p => (
-                      <div key={p.id} onClick={() => openTimeline(p)} className="group flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 cursor-pointer transition-all border border-transparent hover:border-white/5">
-                        <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-900 flex-shrink-0">
+                      <div key={p.id} onClick={() => openTimeline(p)} className="group flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-50 cursor-pointer transition-all border border-transparent hover:border-gray-200">
+                        <div className="w-10 h-10 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
                           <img src={getImgUrl(p.photo_path)} className="w-full h-full object-cover" alt=""/>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-black uppercase truncate group-hover:text-cyan-400">{p.full_name}</p>
-                          <p className="text-[9px] text-rose-400 font-bold mt-0.5">24H+ ELAPSED</p>
+                          <p className="text-xs font-black uppercase text-gray-900 truncate group-hover:text-blue-600">{p.full_name}</p>
+                          <p className="text-[9px] text-red-500 font-bold mt-0.5">24H+ ELAPSED</p>
                         </div>
                       </div>
                     ))}
@@ -418,8 +417,7 @@ export default function PoliceDashboard() {
               </div>
 
               <div className="col-span-5 flex flex-col gap-6">
-                <div className="flex-1 glass-panel silk-border scanline-move rounded-[32px] overflow-hidden relative shadow-2xl">
-                  <div className="scanline" />
+                <div className="flex-1 bg-white border border-gray-200 rounded-3xl overflow-hidden relative shadow-sm">
                   <MapContainer center={mapCenter} zoom={mapZoom} className="w-full h-full" zoomControl={false}>
                     <ChangeView center={mapCenter} zoom={mapZoom}/>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
@@ -522,7 +520,7 @@ export default function PoliceDashboard() {
                       <div className="flex items-center gap-3">
                         <img src={getImgUrl(p.photo_path)} className="w-9 h-9 rounded-lg object-cover opacity-70 group-hover:opacity-100 transition-all" alt="" onError={e => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/150?text=NA"; }}/>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-black uppercase truncate group-hover:text-cyan-400 transition-colors">{p.full_name}</p>
+                          <p className="text-xs font-black uppercase truncate group-hover:text-blue-600 transition-colors text-gray-900">{p.full_name}</p>
                           <span className={`text-[8px] font-black px-1.5 py-0.5 rounded border ${pri.cls}`}>{pri.label}</span>
                         </div>
                       </div>
@@ -596,17 +594,17 @@ export default function PoliceDashboard() {
             <div className="max-w-6xl mx-auto">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-black uppercase tracking-widest flex items-center gap-3">
-                  <Users size={24} className="text-cyan-400"/> CASE REGISTRY
+                  <Users size={24} className="text-blue-600"/> CASE REGISTRY
                 </h2>
-                <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-white/5 px-4 py-2 rounded-xl border border-white/5">
+                <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest bg-gray-50 px-4 py-2 rounded-xl border border-gray-200">
                   Total Records: {persons.length}
                 </div>
               </div>
 
-              <div className="glass-panel rounded-3xl overflow-hidden border border-white/5">
+              <div className="bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-sm">
                 <table className="w-full border-collapse">
                   <thead>
-                    <tr className="text-[10px] font-black text-slate-500 uppercase tracking-widest border-b border-white/5 bg-white/[0.02]">
+                    <tr className="text-[10px] font-black text-gray-500 uppercase tracking-widest border-b border-gray-200 bg-gray-50">
                       <th className="text-left p-6 w-[35%]">Subject Details</th>
                       <th className="text-left p-6 w-[10%]">Age</th>
                       <th className="text-left p-6 w-[15%]">Search Priority</th>

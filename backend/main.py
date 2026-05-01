@@ -36,7 +36,7 @@ app = FastAPI(title="AMBER-India Recovery Grid API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -75,10 +75,20 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise credentials_exception
     return user
 
-# --- STARTUP EVENT (Create Default Admin) ---
+# --- STARTUP EVENT (Create Default Admin & DB Migrations) ---
 @app.on_event("startup")
 def create_admin():
     db = next(get_db())
+    
+    # Auto-migrate string length for base64 images
+    try:
+        db.execute("ALTER TABLE missing_persons ALTER COLUMN photo_path TYPE TEXT;")
+        db.execute("ALTER TABLE citizen_sightings ALTER COLUMN photo_path TYPE TEXT;")
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        pass
+
     admin = db.query(models.User).filter(models.User.username == "admin").first()
     if not admin:
         hashed_pw = auth_utils.get_password_hash("password123")
