@@ -427,8 +427,8 @@ export default function PoliceDashboard() {
                           pathOptions={{ color:'#2dd4bf', weight:2, dashArray:'3,6', fillOpacity:0.1 }} radius={25000} className="animate-pulse" />
                         <Popup className="custom-popup">
                           <div className="p-2">
-                            <p className="font-black uppercase text-sm text-white">{p.full_name}</p>
-                            <p className="text-[9px] mt-1 text-cyan-400">Predicted Search Zone Active</p>
+                            <p className="font-black uppercase text-sm text-gray-900">{p.full_name}</p>
+                            <p className="text-[9px] mt-1 text-blue-600">Predicted Search Zone Active</p>
                           </div>
                         </Popup>
                       </Marker>
@@ -443,9 +443,9 @@ export default function PoliceDashboard() {
                       >
                         <Popup className="custom-popup">
                           <div className="p-1">
-                            <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">Citizen Sighting</p>
-                            <p className="text-xs font-bold text-white">Match: {Math.round(s.match_score || 0)}%</p>
-                            <p className="text-[9px] text-slate-400 mt-1">{new Date(s.reported_at).toLocaleString()}</p>
+                            <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Citizen Sighting</p>
+                            <p className="text-xs font-bold text-gray-900">Match: {Math.round(s.match_score || 0)}%</p>
+                            <p className="text-[9px] text-gray-500 mt-1">{new Date(s.reported_at).toLocaleString()}</p>
                           </div>
                         </Popup>
                       </Circle>
@@ -463,9 +463,9 @@ export default function PoliceDashboard() {
                         >
                           <Popup className="custom-popup">
                             <div className="p-1">
-                              <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Reporter Location</p>
-                              <p className="text-xs font-bold text-white uppercase">{tracker.name}</p>
-                              <p className="text-[9px] text-slate-500 mt-1">Live tracking active...</p>
+                              <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-1">Reporter Location</p>
+                              <p className="text-xs font-bold text-gray-900 uppercase">{tracker.name}</p>
+                              <p className="text-[9px] text-gray-500 mt-1">Live tracking active...</p>
                             </div>
                           </Popup>
                         </Circle>
@@ -538,8 +538,8 @@ export default function PoliceDashboard() {
                     <Marker position={[p.last_known_lat, p.last_known_lng]} eventHandlers={{ click: () => openTimeline(p) }}>
                       <Popup className="custom-popup">
                         <div className="p-2">
-                          <p className="font-black uppercase text-sm text-white">{p.full_name}</p>
-                          <p className={`text-[9px] mt-1 ${p.status === 'RECOVERED' ? 'text-emerald-400' : 'text-cyan-400'}`}>{p.status}</p>
+                          <p className="font-black uppercase text-sm text-gray-900">{p.full_name}</p>
+                          <p className={`text-[9px] mt-1 ${p.status === 'RECOVERED' ? 'text-green-600' : 'text-blue-600'}`}>{p.status}</p>
                         </div>
                       </Popup>
                     </Marker>
@@ -556,9 +556,9 @@ export default function PoliceDashboard() {
                   >
                     <Popup className="custom-popup">
                       <div className="p-1">
-                        <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">Citizen Sighting</p>
-                        <p className="text-xs font-bold text-white">Match: {Math.round(s.match_score || 0)}%</p>
-                        <p className="text-[9px] text-slate-400 mt-1">{new Date(s.reported_at).toLocaleString()}</p>
+                        <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Citizen Sighting</p>
+                        <p className="text-xs font-bold text-gray-900">Match: {Math.round(s.match_score || 0)}%</p>
+                        <p className="text-[9px] text-gray-500 mt-1">{new Date(s.reported_at).toLocaleString()}</p>
                       </div>
                     </Popup>
                   </Circle>
@@ -576,8 +576,8 @@ export default function PoliceDashboard() {
                     >
                       <Popup className="custom-popup">
                         <div className="p-1">
-                          <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Live Reporter</p>
-                          <p className="text-xs font-bold text-white uppercase">{tracker.name}</p>
+                          <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-1">Live Reporter</p>
+                          <p className="text-xs font-bold text-gray-900 uppercase">{tracker.name}</p>
                         </div>
                       </Popup>
                     </Circle>
@@ -612,15 +612,15 @@ export default function PoliceDashboard() {
                       <th className="text-left p-6 w-[25%]">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-gray-200">
                     {persons.map(p => {
                       const pri = getCasePriority(p.reported_at);
                       const isActive = p.status === 'ACTIVE';
                       return (
-                        <tr key={p.id} className="hover:bg-white/[0.03] transition-all group">
+                        <tr key={p.id} className="hover:bg-gray-50 transition-all group">
                           <td className="p-6">
                             <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 rounded-2xl overflow-hidden bg-slate-900 border border-white/10 shadow-xl flex-shrink-0">
+                              <div className="w-12 h-12 rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 shadow-sm flex-shrink-0">
                                 <img 
                                   src={getImgUrl(p.photo_path)} 
                                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
@@ -629,13 +629,13 @@ export default function PoliceDashboard() {
                                 />
                               </div>
                               <div className="min-w-0">
-                                <p className="text-sm font-black uppercase group-hover:text-cyan-400 transition-colors truncate">{p.full_name}</p>
-                                <p className="text-[10px] text-slate-600 font-mono mt-0.5 tracking-tighter">ID: AMB-{String(p.id).padStart(4, '0')}</p>
+                                <p className="text-sm font-black uppercase text-gray-900 group-hover:text-blue-600 transition-colors truncate">{p.full_name}</p>
+                                <p className="text-[10px] text-gray-500 font-mono mt-0.5 tracking-tighter">ID: AMB-{String(p.id).padStart(4, '0')}</p>
                               </div>
                             </div>
                           </td>
                           <td className="p-6">
-                            <span className="text-xs font-black text-slate-400">{p.age}y</span>
+                            <span className="text-xs font-black text-gray-600">{p.age}y</span>
                           </td>
                           <td className="p-6">
                             {isActive ? (
@@ -643,11 +643,11 @@ export default function PoliceDashboard() {
                                 {pri.label}
                               </span>
                             ) : (
-                              <span className="text-[9px] font-black uppercase text-slate-700">--</span>
+                              <span className="text-[9px] font-black uppercase text-gray-400">--</span>
                             )}
                           </td>
                           <td className="p-6">
-                            <span className={`text-[9px] font-black uppercase px-2.5 py-1 rounded-lg border ${isActive ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'}`}>
+                            <span className={`text-[9px] font-black uppercase px-2.5 py-1 rounded-lg border ${isActive ? 'text-amber-700 bg-amber-50 border-amber-200' : 'text-green-700 bg-green-50 border-green-200'}`}>
                               {p.status}
                             </span>
                           </td>
@@ -655,14 +655,14 @@ export default function PoliceDashboard() {
                             <div className="flex items-center gap-2">
                               <button 
                                 onClick={() => { openTimeline(p); setActiveTab('map'); setMapCenter([p.last_known_lat, p.last_known_lng]); }}
-                                className="h-9 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border border-white/5 active:scale-95"
+                                className="h-9 px-4 rounded-xl bg-white hover:bg-gray-50 text-gray-700 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border border-gray-300 shadow-sm active:scale-95"
                               >
                                 <Eye size={14}/> Timeline
                               </button>
                               {isActive && (
                                 <button 
                                   onClick={() => markRecovered(p.id)}
-                                  className="h-9 px-4 rounded-xl bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-white border border-emerald-500/20 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 active:scale-95"
+                                  className="h-9 px-4 rounded-xl bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 active:scale-95"
                                 >
                                   <CheckCircle2 size={14}/> Recover
                                 </button>
@@ -689,81 +689,80 @@ export default function PoliceDashboard() {
       {/* ══ CASE TIMELINE PANEL ══ */}
       {selectedCase && (
         <div className="fixed inset-0 z-[1500] flex justify-end printable-timeline">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedCase(null)}/>
-          <div className="relative w-[400px] h-full bg-[#070b12] border-l border-white/10 flex flex-col animate-slide-in shadow-2xl z-[1501]">
-            <div className="p-7 border-b border-white/5 flex justify-between items-start">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedCase(null)}/>
+          <div className="relative w-[400px] h-full bg-white border-l border-gray-200 flex flex-col animate-slide-in shadow-2xl z-[1501]">
+            <div className="p-7 border-b border-gray-200 flex justify-between items-start">
               <div>
-                <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">Case File</p>
-                <h3 className="text-lg font-black uppercase">{selectedCase.full_name}</h3>
-                <p className="text-[10px] text-slate-600 mt-1">Age {selectedCase.age} • Case #{selectedCase.id}</p>
+                <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2">Case File</p>
+                <h3 className="text-lg font-black uppercase text-gray-900">{selectedCase.full_name}</h3>
+                <p className="text-[10px] text-gray-500 mt-1">Age {selectedCase.age} • Case #{selectedCase.id}</p>
               </div>
-              <button onClick={() => setSelectedCase(null)} className="text-slate-700 hover:text-white transition-all mt-1"><X size={22}/></button>
+              <button onClick={() => setSelectedCase(null)} className="text-gray-400 hover:text-gray-900 transition-all mt-1"><X size={22}/></button>
             </div>
             {/* Priority Block */}
             {(() => { const pri = getCasePriority(selectedCase.reported_at); const hrs = Math.round((Date.now() - new Date(selectedCase.reported_at)) / 3600000);
-              return (<div className={`mx-6 mt-5 p-4 rounded-2xl border flex items-center gap-3 ${pri.cls.includes('rose') ? 'border-rose-500/20 bg-rose-500/5' : pri.cls.includes('orange') ? 'border-orange-500/20 bg-orange-500/5' : 'border-cyan-500/20 bg-cyan-500/5'}`}>
-                <AlertTriangle size={16} className={`${pri.cls.split(' ')[0]} ${pri.pulse ? 'animate-pulse' : ''}`}/>
-                <div><p className={`text-[10px] font-black uppercase ${pri.cls.split(' ')[0]}`}>{pri.label} — {hrs}h elapsed</p>
-                <p className="text-[9px] text-slate-600 mt-0.5">{new Date(selectedCase.reported_at).toLocaleString()}</p></div>
+              return (<div className={`mx-6 mt-5 p-4 rounded-2xl border flex items-center gap-3 ${pri.cls.includes('rose') ? 'border-red-200 bg-red-50' : pri.cls.includes('orange') ? 'border-amber-200 bg-amber-50' : 'border-blue-200 bg-blue-50'}`}>
+                <AlertTriangle size={16} className={`${pri.cls.includes('rose') ? 'text-red-500' : pri.cls.includes('orange') ? 'text-amber-500' : 'text-blue-500'} ${pri.pulse ? 'animate-pulse' : ''}`}/>
+                <div><p className={`text-[10px] font-black uppercase ${pri.cls.includes('rose') ? 'text-red-600' : pri.cls.includes('orange') ? 'text-amber-600' : 'text-blue-600'}`}>{pri.label} — {hrs}h elapsed</p>
+                <p className="text-[9px] text-gray-500 mt-0.5">{new Date(selectedCase.reported_at).toLocaleString()}</p></div>
               </div>);}
             )()}
             {/* Sightings Timeline */}
             <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-              <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-4 flex items-center gap-2">
+              <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-4 flex items-center gap-2">
                 <Activity size={11}/> Case Timeline
               </p>
               
               <div className="space-y-4">
                 {caseSightings.map((s, i) => (
-                  <div key={s.id} className="pl-5 border-l-2 border-slate-800 relative">
-                    <div className={`absolute left-[-5px] top-1.5 w-2 h-2 rounded-full ${s.match_score > 70 ? 'bg-emerald-500' : s.match_score > 40 ? 'bg-amber-500' : 'bg-slate-700'}`}/>
-                    <div className="glass-card p-4 rounded-xl">
+                  <div key={s.id} className="pl-5 border-l-2 border-gray-200 relative">
+                    <div className={`absolute left-[-5px] top-1.5 w-2 h-2 rounded-full ${s.match_score > 70 ? 'bg-green-500' : s.match_score > 40 ? 'bg-amber-500' : 'bg-gray-400'}`}/>
+                    <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
                       <div className="flex justify-between mb-3">
-                        <span className="text-[9px] font-black text-slate-600 uppercase">Sighting #{caseSightings.length - i}</span>
-                        <span className="text-[8px] font-mono text-slate-700">{new Date(s.reported_at).toLocaleTimeString()}</span>
+                        <span className="text-[9px] font-black text-gray-500 uppercase">Sighting #{caseSightings.length - i}</span>
+                        <span className="text-[8px] font-mono text-gray-400">{new Date(s.reported_at).toLocaleTimeString()}</span>
                       </div>
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-wider">AI Confidence</span>
-                        <span className={`text-sm font-black ${s.match_score > 70 ? 'text-emerald-400' : s.match_score > 40 ? 'text-cyan-400' : 'text-slate-500'}`}>{Math.round(s.match_score || 0)}%</span>
+                        <span className="text-[9px] font-black text-gray-500 uppercase tracking-wider">AI Confidence</span>
+                        <span className={`text-sm font-black ${s.match_score > 70 ? 'text-green-600' : s.match_score > 40 ? 'text-blue-600' : 'text-gray-500'}`}>{Math.round(s.match_score || 0)}%</span>
                       </div>
-                      <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-2">
-                        <div className={`h-full rounded-full transition-all duration-100 ${s.match_score > 70 ? 'bg-emerald-500' : s.match_score > 40 ? 'bg-cyan-500' : 'bg-slate-600'}`} style={{ width: `${s.match_score || 0}%` }}/>
+                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mb-2">
+                        <div className={`h-full rounded-full transition-all duration-100 ${s.match_score > 70 ? 'bg-green-500' : s.match_score > 40 ? 'bg-blue-500' : 'bg-gray-400'}`} style={{ width: `${s.match_score || 0}%` }}/>
                       </div>
-                      <p className={`text-[9px] font-black uppercase tracking-widest ${s.match_score > 70 ? 'text-emerald-400' : 'text-slate-600'}`}>
+                      <p className={`text-[9px] font-black uppercase tracking-widest ${s.match_score > 70 ? 'text-green-600' : 'text-gray-500'}`}>
                         {s.match_score > 70 ? '✅ MATCH CONFIRMED' : s.match_score > 40 ? '⚠ Review Required' : '❌ No Match'}
                       </p>
-                      <p className="text-[9px] text-slate-700 mt-1.5 font-mono">{s.sighting_lat?.toFixed(5)}, {s.sighting_lng?.toFixed(5)}</p>
+                      <p className="text-[9px] text-gray-500 mt-1.5 font-mono">{s.sighting_lat?.toFixed(5)}, {s.sighting_lng?.toFixed(5)}</p>
                     </div>
                   </div>
                 ))}
                 
                 {/* Initial Report Node */}
-                <div className="pl-5 border-l-2 border-slate-800 relative">
-                  <div className="absolute left-[-5px] top-1.5 w-2 h-2 rounded-full bg-cyan-500"/>
-                  <div className="glass-card p-4 rounded-xl border border-cyan-500/20 bg-cyan-500/5">
+                <div className="pl-5 border-l-2 border-gray-200 relative">
+                  <div className="absolute left-[-5px] top-1.5 w-2 h-2 rounded-full bg-blue-500"/>
+                  <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
                     <div className="flex justify-between mb-1">
-                      <span className="text-[9px] font-black text-cyan-400 uppercase">Case Reported</span>
-                      <span className="text-[8px] font-mono text-slate-500">{new Date(selectedCase.reported_at).toLocaleTimeString()}</span>
+                      <span className="text-[9px] font-black text-blue-600 uppercase">Case Reported</span>
+                      <span className="text-[8px] font-mono text-gray-500">{new Date(selectedCase.reported_at).toLocaleTimeString()}</span>
                     </div>
-                    <p className="text-[9px] text-slate-500 mt-1.5 font-mono">Original Last Known: {selectedCase.last_known_lat?.toFixed(5)}, {selectedCase.last_known_lng?.toFixed(5)}</p>
+                    <p className="text-[9px] text-gray-500 mt-1.5 font-mono">Original Last Known: {selectedCase.last_known_lat?.toFixed(5)}, {selectedCase.last_known_lng?.toFixed(5)}</p>
                   </div>
                 </div>
               </div>
             </div>
             {selectedCase.status === 'ACTIVE' ? (
-              <div className="p-6 border-t border-white/5 space-y-3">
+              <div className="p-6 border-t border-gray-200 space-y-3">
                 <a href={getShareUrl(selectedCase)} target="_blank" rel="noopener noreferrer"
-                  className="w-full py-3 rounded-xl font-black text-xs uppercase tracking-widest text-green-400 border border-green-500/20 bg-green-500/5 hover:bg-green-500/10 flex items-center justify-center gap-2 active:scale-95 transition-all">
+                  className="w-full py-3 rounded-xl font-black text-xs uppercase tracking-widest text-green-700 border border-green-200 bg-green-50 hover:bg-green-100 flex items-center justify-center gap-2 active:scale-95 transition-all">
                   <Share2 size={14}/> Share on WhatsApp
                 </a>
-                <button onClick={() => markRecovered(selectedCase.id)} className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-widest text-white flex items-center justify-center gap-2 active:scale-95 transition-all"
-                  style={{ background: 'linear-gradient(135deg,#10b981,#059669)', boxShadow: '0 8px 30px rgba(16,185,129,0.25)' }}>
+                <button onClick={() => markRecovered(selectedCase.id)} className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-widest text-white flex items-center justify-center gap-2 active:scale-95 transition-all bg-green-600 hover:bg-green-700 shadow-sm">
                   <CheckCircle2 size={16}/> Mark as Recovered
                 </button>
               </div>
             ) : (
-              <div className="p-6 border-t border-white/5">
-                <button onClick={() => window.print()} className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-widest text-white flex items-center justify-center gap-2 active:scale-95 transition-all bg-blue-600 hover:bg-blue-500 shadow-lg">
+              <div className="p-6 border-t border-gray-200">
+                <button onClick={() => window.print()} className="w-full py-4 rounded-xl font-black text-xs uppercase tracking-widest text-white flex items-center justify-center gap-2 active:scale-95 transition-all bg-blue-600 hover:bg-blue-700 shadow-sm">
                   <Download size={16}/> EXPORT PDF REPORT
                 </button>
               </div>
@@ -775,39 +774,39 @@ export default function PoliceDashboard() {
       {/* ══ NEW ALERT DRAWER ══ */}
       {drawer && (
         <div className="fixed inset-0 z-[2000] flex justify-end">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={() => setDrawer(false)}/>
-          <div className="relative w-[420px] h-full bg-[#070b12] border-l border-white/10 p-9 flex flex-col z-[2001] animate-slide-in shadow-2xl">
-            <button onClick={() => setDrawer(false)} className="absolute top-9 right-9 text-slate-600 hover:text-white transition-all"><X size={28}/></button>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setDrawer(false)}/>
+          <div className="relative w-[420px] h-full bg-white border-l border-gray-200 p-9 flex flex-col z-[2001] animate-slide-in shadow-2xl">
+            <button onClick={() => setDrawer(false)} className="absolute top-9 right-9 text-gray-400 hover:text-gray-900 transition-all"><X size={28}/></button>
             <div className="mb-7">
-              <h2 className="text-xl font-black uppercase italic tracking-tight">Register <span className="text-amber-400">Missing Person</span></h2>
-              <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest mt-1.5">This person will appear on the public portal immediately.</p>
+              <h2 className="text-xl font-black uppercase italic tracking-tight text-gray-900">Register <span className="text-blue-600">Missing Person</span></h2>
+              <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest mt-1.5">This person will appear on the public portal immediately.</p>
             </div>
             <form onSubmit={handleRegister} className="flex-1 space-y-4 overflow-y-auto pr-1 custom-scrollbar">
               {[['Full Name','text','full_name'],['Age','number','age']].map(([l,t,k]) => (
                 <div key={k}>
-                  <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest block mb-1.5">{l}</label>
-                  <input type={t} required className="w-full bg-black/40 border border-white/5 p-3.5 rounded-xl text-xs font-bold text-white outline-none focus:border-amber-500/60 transition-all"
+                  <label className="text-[9px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">{l}</label>
+                  <input type={t} required className="w-full bg-white border border-gray-300 p-3.5 rounded-xl text-xs font-bold text-gray-900 outline-none focus:border-blue-500 transition-all shadow-sm"
                     value={form[k]} onChange={e => setForm({...form, [k]: e.target.value})}/>
                 </div>
               ))}
               <div>
-                <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest block mb-1.5">Description</label>
-                <textarea rows="3" required className="w-full bg-black/40 border border-white/5 p-3.5 rounded-xl text-xs font-bold text-white outline-none focus:border-amber-500/60 resize-none"
+                <label className="text-[9px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Description</label>
+                <textarea rows="3" required className="w-full bg-white border border-gray-300 p-3.5 rounded-xl text-xs font-bold text-gray-900 outline-none focus:border-blue-500 resize-none shadow-sm"
                   value={form.description} onChange={e => setForm({...form, description: e.target.value})}/>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {[['Latitude','lat'],['Longitude','lng']].map(([l,k]) => (
                   <div key={k}>
-                    <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest block mb-1.5">{l}</label>
-                    <input type="number" step="any" className="w-full bg-black/40 border border-white/5 p-3.5 rounded-xl text-xs text-slate-400 outline-none focus:border-amber-500/60"
+                    <label className="text-[9px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">{l}</label>
+                    <input type="number" step="any" className="w-full bg-white border border-gray-300 p-3.5 rounded-xl text-xs text-gray-900 outline-none focus:border-blue-500 shadow-sm"
                       value={form[k]} onChange={e => setForm({...form, [k]: e.target.value})}/>
                   </div>
                 ))}
               </div>
-              <div className="relative glass-panel p-8 border-dashed border border-slate-800 hover:border-cyan-500/50 transition-all text-center rounded-2xl cursor-pointer group">
+              <div className="relative bg-gray-50 p-8 border-dashed border-2 border-gray-300 hover:border-blue-400 transition-all text-center rounded-2xl cursor-pointer group">
                 <input type="file" required className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => setFile(e.target.files[0])}/>
-                <Upload size={24} className="mx-auto mb-2 text-slate-700 group-hover:text-cyan-400 transition-colors"/>
-                <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">{file ? file.name : 'Upload a clear photo of their face'}</p>
+                <Upload size={24} className="mx-auto mb-2 text-gray-400 group-hover:text-blue-500 transition-colors"/>
+                <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{file ? file.name : 'Upload a clear photo of their face'}</p>
               </div>
               <button type="submit" disabled={submitting} className="w-full btn-premium py-4 rounded-xl font-black uppercase tracking-widest text-white text-[11px] disabled:opacity-40">
                 {submitting ? 'Registering...' : 'Register Person'}
