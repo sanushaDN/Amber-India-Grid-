@@ -420,9 +420,9 @@ export default function PoliceDashboard() {
               <div className="col-span-5 flex flex-col gap-6">
                 <div className="flex-1 glass-panel silk-border scanline-move rounded-[32px] overflow-hidden relative shadow-2xl">
                   <div className="scanline" />
-                  <MapContainer center={mapCenter} zoom={mapZoom} className="w-full h-full grayscale-[0.2] contrast-[1.1]" zoomControl={false}>
+                  <MapContainer center={mapCenter} zoom={mapZoom} className="w-full h-full" zoomControl={false}>
                     <ChangeView center={mapCenter} zoom={mapZoom}/>
-                    <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"/>
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
                     {active.map(p => (
                       <Marker key={p.id} position={[p.last_known_lat, p.last_known_lng]} eventHandlers={{ click: () => openTimeline(p) }}>
                         <Circle center={[p.last_known_lat, p.last_known_lng]}
@@ -534,7 +534,7 @@ export default function PoliceDashboard() {
             <div className="flex-1">
               <MapContainer center={mapCenter} zoom={mapZoom} className="w-full h-full" zoomControl={true}>
                 <ChangeView center={mapCenter} zoom={mapZoom}/>
-                <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"/>
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
                 {persons.map(p => (
                   <React.Fragment key={p.id}>
                     <Marker position={[p.last_known_lat, p.last_known_lng]} eventHandlers={{ click: () => openTimeline(p) }}>

@@ -63,41 +63,33 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100 flex flex-col font-['Outfit'] relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/40 via-[#020617] to-[#020617] -z-10" />
-      <div className="security-grid" />
-      <div className="absolute top-20 left-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl -z-10 pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl -z-10 pointer-events-none" />
-
+    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col relative">
       {/* Nav */}
-      <nav className="w-full flex justify-between items-center px-8 py-6 z-10 border-b border-indigo-500/20 bg-slate-900/40 backdrop-blur-md">
+      <nav className="w-full flex justify-between items-center px-8 py-6 z-10 border-b border-gray-200 bg-white shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="relative">
-            <ShieldAlert size={32} className="text-amber-500" />
-            <div className="absolute -inset-1 bg-amber-500/20 blur rounded-full animate-pulse" />
-          </div>
+          <ShieldAlert size={32} className="text-blue-600" />
           <div>
-            <h1 className="text-2xl font-bold tracking-widest text-slate-100">AMBER-<span className="text-teal-400">India</span></h1>
-            <p className="text-[10px] tracking-widest text-slate-400 uppercase">National Missing Persons Portal</p>
+            <h1 className="text-2xl font-bold tracking-widest text-gray-900">AMBER-<span className="text-blue-600">India</span></h1>
+            <p className="text-[10px] tracking-widest text-gray-500 uppercase">National Missing Persons Portal</p>
           </div>
         </div>
-        <button onClick={() => navigate('/login')} className="flex items-center gap-2 px-5 py-2 rounded-lg border border-slate-700/50 bg-slate-800/50 hover:bg-slate-700/80 transition-all font-mono text-sm tracking-wider group">
-          <Lock size={14} className="text-slate-400 group-hover:text-indigo-400 transition-colors" />
+        <button onClick={() => navigate('/login')} className="flex items-center gap-2 px-5 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-all font-mono text-sm tracking-wider text-gray-700">
+          <Lock size={14} className="text-gray-400" />
           Officer Login
         </button>
       </nav>
 
       <main className="flex-grow flex flex-col items-center text-center px-4 z-10 pt-16 pb-12">
         {/* Hero */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-300 text-sm font-mono tracking-wider mb-8 animate-fade-in-up">
-          <Activity size={14} className="animate-pulse" />
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-sm font-mono tracking-wider mb-8 animate-fade-in-up">
+          <Activity size={14} />
           Available 24/7 • Helping Families
         </div>
-        <h2 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 max-w-4xl text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-slate-500 animate-fade-in-up leading-tight">
+        <h2 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 max-w-4xl text-blue-900 animate-fade-in-up leading-tight">
           National Missing Person<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-indigo-500">Identification System</span>
+          <span className="text-blue-600">Identification System</span>
         </h2>
-        <p className="text-lg md:text-xl text-slate-400 max-w-2xl mb-10 font-light leading-relaxed animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+        <p className="text-lg md:text-xl text-gray-600 max-w-2xl mb-10 font-light leading-relaxed animate-fade-in-up" style={{ animationDelay: '200ms' }}>
           AMBER-India is India's centralised missing persons reporting system. If you've spotted someone, upload a photo — our system will instantly notify law enforcement with a facial match score.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
@@ -114,8 +106,8 @@ const LandingPage = () => {
         <div className="w-full max-w-6xl mt-24 text-left animate-fade-in-up" style={{ animationDelay: '500ms' }}>
           <div className="flex items-end justify-between mb-6">
             <div>
-              <h3 className="text-2xl font-bold text-white">Active Missing Person Records</h3>
-              <p className="text-slate-400 text-sm mt-1">These people are currently missing. Do you recognise anyone? Please report immediately.</p>
+              <h3 className="text-2xl font-bold text-gray-900">Active Missing Person Records</h3>
+              <p className="text-gray-500 text-sm mt-1">These people are currently missing. Do you recognise anyone? Please report immediately.</p>
             </div>
             {missingPersons.length > 0 && (
               <span className="text-xs font-bold text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-full animate-pulse flex-shrink-0 ml-4">
@@ -126,48 +118,48 @@ const LandingPage = () => {
 
           {loadingPersons ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map(i => <div key={i} className="rounded-2xl bg-slate-800/40 border border-white/5 h-72 animate-pulse" />)}
+              {[1, 2, 3, 4].map(i => <div key={i} className="rounded-2xl bg-gray-200 border border-gray-300 h-72 animate-pulse" />)}
             </div>
           ) : missingPersons.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-slate-600 border border-white/5 rounded-2xl bg-white/[0.01]">
+            <div className="flex flex-col items-center justify-center py-16 text-gray-500 border border-gray-200 rounded-2xl bg-white">
               <Heart size={40} className="mb-4 opacity-30" />
               <p className="font-bold text-sm">No active missing person cases at this time.</p>
-              <p className="text-sm mt-1 text-slate-700">Check back later, or contact your local police station.</p>
+              <p className="text-sm mt-1 text-gray-500">Check back later, or contact your local police station.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {missingPersons.map(person => {
                 const hrs = (Date.now() - new Date(person.reported_at)) / 3600000;
                 return (
-                  <div key={person.id} className="group rounded-2xl bg-slate-900/60 border border-white/5 hover:border-teal-500/30 transition-all overflow-hidden flex flex-col">
-                    <div className="relative h-48 overflow-hidden bg-slate-800">
+                  <div key={person.id} className="group rounded-2xl bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all overflow-hidden flex flex-col">
+                    <div className="relative h-48 overflow-hidden bg-gray-100">
                       <img src={getImgUrl(person.photo_path)} alt={person.full_name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         onError={e => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/300x200?text=Photo+Unavailable'; }} />
                       {hrs > 24 && (
                         <div className="absolute top-2 left-2 bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">URGENT</div>
                       )}
-                      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/80 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-900/80 to-transparent" />
                       <div className="absolute bottom-2 left-3 right-3">
                         <p className="text-white font-bold text-sm truncate">{person.full_name}</p>
-                        <p className="text-slate-300 text-xs">{person.age} years old</p>
+                        <p className="text-gray-200 text-xs">{person.age} years old</p>
                       </div>
                     </div>
                     <div className="p-3 flex flex-col gap-2 flex-1">
-                      <div className="flex items-center gap-1.5 text-slate-500 text-xs">
+                      <div className="flex items-center gap-1.5 text-gray-500 text-xs">
                         <Clock size={11} />
                         <span>Missing {getDaysMissing(person.reported_at)}</span>
                       </div>
                       {person.description && (
-                        <p className="text-slate-400 text-[11px] leading-relaxed line-clamp-2">{person.description}</p>
+                        <p className="text-gray-600 text-[11px] leading-relaxed line-clamp-2">{person.description}</p>
                       )}
-                      <div className="flex gap-2 mt-auto pt-2">
+                      <div className="flex gap-2 mt-auto pt-2 border-t border-gray-100">
                         <button onClick={() => navigate(`/report?personId=${person.id}`)}
-                          className="flex-1 py-2 bg-teal-500/10 hover:bg-teal-500 border border-teal-500/30 text-teal-400 hover:text-teal-950 text-[11px] font-bold rounded-lg transition-all">
+                          className="flex-1 py-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 font-bold rounded-lg transition-all text-[11px]">
                           Report Sighting
                         </button>
                         <a href={getWhatsAppUrl(person)} target="_blank" rel="noopener noreferrer"
-                          className="p-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg transition-all flex items-center justify-center" title="Share on WhatsApp">
+                          className="p-2 bg-green-50 hover:bg-green-100 border border-green-200 text-green-600 rounded-lg transition-all flex items-center justify-center" title="Share on WhatsApp">
                           <Share2 size={14} />
                         </a>
                       </div>
@@ -181,11 +173,11 @@ const LandingPage = () => {
 
         {/* ── HELPLINES ── */}
         <div className="w-full max-w-4xl mt-16 animate-fade-in-up" style={{ animationDelay: '550ms' }}>
-          <div className="glass-panel p-6 rounded-2xl border border-white/5">
+          <div className="glass-panel p-6 rounded-2xl border border-gray-200">
             <div className="flex items-center gap-3 mb-5">
-              <Phone size={18} className="text-rose-400" />
-              <h3 className="font-bold text-white text-lg">Emergency Helplines</h3>
-              <span className="ml-auto text-xs text-slate-500">Free to call • Available 24/7</span>
+              <Phone size={18} className="text-red-500" />
+              <h3 className="font-bold text-gray-900 text-lg">Emergency Helplines</h3>
+              <span className="ml-auto text-xs text-gray-500">Free to call • Available 24/7</span>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
