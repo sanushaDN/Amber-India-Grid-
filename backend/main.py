@@ -3,11 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, text
 from datetime import datetime, timedelta
 import models
 import schemas
-from database import engine, get_db
+from database import engine, get_db, SessionLocal
 import os
 import re
 import shutil
@@ -78,24 +78,27 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
 # --- STARTUP EVENT (Create Default Admin & DB Migrations) ---
 @app.on_event("startup")
 def create_admin():
-    db = next(get_db())
-    
-    # Auto-migrate string length for base64 images
+    db = SessionLocal()
     try:
-        db.execute("ALTER TABLE missing_persons ALTER COLUMN photo_path TYPE TEXT;")
-        db.execute("ALTER TABLE citizen_sightings ALTER COLUMN photo_path TYPE TEXT;")
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        pass
+        # Auto-migrate string length for base64 images
+        try:
+            db.execute(text("ALTER TABLE missing_persons ALTER COLUMN photo_path TYPE TEXT;"))
+            db.execute(text("ALTER TABLE citizen_sightings ALTER COLUMN photo_path TYPE TEXT;"))
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            print(f"Migration skipped/failed: {e}")
+            pass
 
-    admin = db.query(models.User).filter(models.User.username == "admin").first()
-    if not admin:
-        hashed_pw = auth_utils.get_password_hash("password123")
-        new_admin = models.User(username="admin", hashed_password=hashed_pw)
-        db.add(new_admin)
-        db.commit()
-        print("Default admin user created: admin / password123")
+        admin = db.query(models.User).filter(models.User.username == "admin").first()
+        if not admin:
+            hashed_pw = auth_utils.get_password_hash("password123")
+            new_admin = models.User(username="admin", hashed_password=hashed_pw)
+            db.add(new_admin)
+            db.commit()
+            print("Default admin user created: admin / password123")
+    finally:
+        db.close()
 
 class ConnectionManager:
     def __init__(self):
