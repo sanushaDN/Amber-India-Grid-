@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import {
@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 const API_BASE = 'https://amber-backend-flng.onrender.com';
 const WS_BASE = 'wss://amber-backend-flng.onrender.com';
+const INDIA_BOUNDS = [[6.5, 68.0], [35.5, 97.5]]; // Approximate bounds for India
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -21,6 +22,15 @@ L.Icon.Default.mergeOptions({
 function ChangeView({ center, zoom }) {
   const map = useMap();
   useEffect(() => { map.setView(center, zoom || 5, { animate: true, duration: 1.5 }); }, [center, zoom]);
+  return null;
+}
+
+function LocationPicker({ onSelect }) {
+  useMapEvents({
+    click(e) {
+      onSelect(e.latlng.lat, e.latlng.lng);
+    },
+  });
   return null;
 }
 
@@ -186,8 +196,15 @@ export default function PoliceDashboard() {
     }, 2000);
   };
 
+  const isWithinIndia = (lat, lng) => {
+    return lat >= 6.5 && lat <= 35.5 && lng >= 68.0 && lng <= 97.5;
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
+    if (!isWithinIndia(form.lat, form.lng)) {
+      return toast("Registration failed. Coordinates must be within Indian Territory.", "rose");
+    }
     if (!file) return toast("Please upload a photo of the person", "amber");
     setSub(true);
     const fd = new FormData();
@@ -418,7 +435,14 @@ export default function PoliceDashboard() {
 
               <div className="col-span-5 flex flex-col gap-6">
                 <div className="flex-1 bg-white border border-gray-200 rounded-3xl overflow-hidden relative shadow-sm">
-                  <MapContainer center={mapCenter} zoom={mapZoom} className="w-full h-full" zoomControl={false}>
+                  <MapContainer 
+                    center={mapCenter} 
+                    zoom={mapZoom} 
+                    className="w-full h-full" 
+                    zoomControl={false}
+                    maxBounds={INDIA_BOUNDS}
+                    minZoom={4}
+                  >
                     <ChangeView center={mapCenter} zoom={mapZoom}/>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
                     {active.map(p => (
@@ -530,7 +554,14 @@ export default function PoliceDashboard() {
               </div>
             </div>
             <div className="flex-1">
-              <MapContainer center={mapCenter} zoom={mapZoom} className="w-full h-full" zoomControl={true}>
+              <MapContainer 
+                center={mapCenter} 
+                zoom={mapZoom} 
+                className="w-full h-full" 
+                zoomControl={true}
+                maxBounds={INDIA_BOUNDS}
+                minZoom={4}
+              >
                 <ChangeView center={mapCenter} zoom={mapZoom}/>
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
                 {persons.map(p => (
@@ -802,6 +833,30 @@ export default function PoliceDashboard() {
                       value={form[k]} onChange={e => setForm({...form, [k]: e.target.value})}/>
                   </div>
                 ))}
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-[9px] font-black text-gray-500 uppercase tracking-widest block">Tap Map to Set Location</label>
+                  <button type="button" onClick={() => {
+                    if (navigator.geolocation) {
+                      navigator.geolocation.getCurrentPosition((pos) => {
+                        setForm({...form, lat: pos.coords.latitude, lng: pos.coords.longitude});
+                      });
+                    }
+                  }} className="text-[9px] font-black text-blue-600 uppercase hover:underline">Use My Location</button>
+                </div>
+                <div className="h-44 rounded-2xl overflow-hidden border border-gray-200 relative group">
+                  <MapContainer center={[form.lat || 20.5937, form.lng || 78.9629]} zoom={4} className="w-full h-full" zoomControl={false} maxBounds={INDIA_BOUNDS}>
+                    <ChangeView center={[form.lat, form.lng]} zoom={form.lat === 28.6139 ? 4 : 12}/>
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                    <LocationPicker onSelect={(lat, lng) => setForm({...form, lat, lng})}/>
+                    <Marker position={[form.lat, form.lng]} />
+                  </MapContainer>
+                  <div className="absolute top-2 right-2 z-[1000] bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[8px] font-black uppercase text-gray-600 border border-gray-200 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                    Click to Pin
+                  </div>
+                </div>
               </div>
               <div className="relative bg-gray-50 p-8 border-dashed border-2 border-gray-300 hover:border-blue-400 transition-all text-center rounded-2xl cursor-pointer group">
                 <input type="file" required className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => setFile(e.target.files[0])}/>

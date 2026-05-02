@@ -89,7 +89,15 @@ export default function CitizenUpload() {
     }, 70);
   };
 
+  const isWithinIndia = (lat, lng) => {
+    return lat >= 6.5 && lat <= 35.5 && lng >= 68.0 && lng <= 97.5;
+  };
+
   const handleSubmit = async () => {
+    if (!isWithinIndia(location.lat, location.lng)) {
+      setSubmitError('ALERT: YOU ARE OUTSIDE THE NATIONAL GRID. Reports can only be submitted within Indian Territory.');
+      return;
+    }
     setUploading(true);
     setSubmitError('');
     const formData = new FormData();
