@@ -63,56 +63,75 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col relative">
+    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col relative overflow-x-hidden">
+      {/* Background Decoration */}
+      <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none -z-10" />
+      <div className="absolute top-40 -right-20 w-96 h-96 bg-blue-400/5 rounded-full blur-[100px] -z-10" />
+      <div className="absolute bottom-40 -left-20 w-80 h-80 bg-teal-400/5 rounded-full blur-[100px] -z-10" />
+
       {/* Nav */}
-      <nav className="w-full flex justify-between items-center px-8 py-6 z-10 border-b border-gray-200 bg-white shadow-sm">
+      <nav className="w-full flex justify-between items-center px-8 py-6 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-md sticky top-0">
         <div className="flex items-center gap-3">
-          <ShieldAlert size={32} className="text-blue-600" />
+          <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-200">
+            <ShieldAlert size={24} className="text-white" />
+          </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-widest text-gray-900">AMBER-<span className="text-blue-600">India</span></h1>
-            <p className="text-[10px] tracking-widest text-gray-500 uppercase">National Missing Persons Portal</p>
+            <h1 className="text-xl font-black tracking-tight text-gray-900">AMBER-<span className="text-blue-600">India</span></h1>
+            <p className="text-[9px] font-black tracking-[0.2em] text-gray-400 uppercase">National Missing Persons Portal</p>
           </div>
         </div>
-        <button onClick={() => navigate('/login')} className="flex items-center gap-2 px-5 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-all font-mono text-sm tracking-wider text-gray-700">
-          <Lock size={14} className="text-gray-400" />
-          Officer Login
-        </button>
+        <div className="flex items-center gap-4">
+           <button onClick={() => navigate('/login')} className="flex items-center gap-2 px-5 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all font-black text-[10px] uppercase tracking-widest text-gray-600">
+            <Lock size={14} className="opacity-50" />
+            Officer Login
+          </button>
+        </div>
       </nav>
 
-      <main className="flex-grow flex flex-col items-center text-center px-4 z-10 pt-16 pb-12">
+      <main className="flex-grow flex flex-col items-center text-center px-4 z-10 pt-20 pb-12">
         {/* Hero */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-sm font-mono tracking-wider mb-8 animate-fade-in-up">
-          <Activity size={14} />
-          Available 24/7 • Helping Families
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-blue-100 text-blue-600 text-[10px] font-black uppercase tracking-widest mb-8 animate-slide-up shadow-sm">
+          <Activity size={14} className="animate-pulse" />
+          Real-time Grid • Available 24/7
         </div>
-        <h2 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 max-w-4xl text-blue-900 animate-fade-in-up leading-tight">
-          National Missing Person<br />
-          <span className="text-blue-600">Identification System</span>
+        
+        <h2 className="text-5xl md:text-8xl font-black tracking-tighter mb-8 max-w-5xl animate-slide-up leading-[0.9] text-gray-900">
+          Reuniting Families Through <br />
+          <span className="text-gradient-blue italic">Intelligence.</span>
         </h2>
-        <p className="text-lg md:text-xl text-gray-600 max-w-2xl mb-10 font-light leading-relaxed animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-          AMBER-India is India's centralised missing persons reporting system. If you've spotted someone, upload a photo — our system will instantly notify law enforcement with a facial match score.
+        
+        <p className="text-lg md:text-xl text-gray-500 max-w-2xl mb-12 font-medium leading-relaxed animate-slide-up" style={{ animationDelay: '100ms' }}>
+          India's most advanced missing person identification grid. Powered by AI biometrics and crowdsourced intelligence to secure every citizen.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
+        
+        <div className="flex flex-col sm:flex-row gap-6 animate-slide-up" style={{ animationDelay: '200ms' }}>
           <button onClick={() => navigate('/report')}
-            className="group relative px-8 py-4 bg-teal-500 hover:bg-teal-400 text-teal-950 font-bold text-lg rounded-xl flex items-center justify-center gap-3 transition-all hover:scale-105 hover:shadow-[0_0_40px_-5px_rgba(45,212,191,0.5)] overflow-hidden">
-            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-            <ScanFace className="relative z-10" />
-            <span className="relative z-10">Report a Sighting</span>
-            <ChevronRight className="relative z-10 group-hover:translate-x-1 transition-transform" />
+            className="group px-10 py-5 bg-gradient-premium text-white font-black text-xs uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-4 transition-all hover:scale-105 shadow-xl shadow-blue-200">
+            <ScanFace size={20} />
+            Report a Sighting
+            <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          </button>
+          
+          <button onClick={() => document.getElementById('records-section').scrollIntoView({ behavior: 'smooth' })}
+            className="px-10 py-5 bg-white border border-gray-200 text-gray-600 font-black text-xs uppercase tracking-[0.2em] rounded-2xl transition-all hover:bg-gray-50">
+            Browse Records
           </button>
         </div>
 
         {/* ── MISSING PERSONS GALLERY ── */}
-        <div className="w-full max-w-6xl mt-24 text-left animate-fade-in-up" style={{ animationDelay: '500ms' }}>
-          <div className="flex items-end justify-between mb-6">
+        <div id="records-section" className="w-full max-w-6xl mt-32 text-left animate-slide-up" style={{ animationDelay: '300ms' }}>
+          <div className="flex items-end justify-between mb-10">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">Active Missing Person Records</h3>
-              <p className="text-gray-500 text-sm mt-1">These people are currently missing. Do you recognise anyone? Please report immediately.</p>
+              <h3 className="text-3xl font-black tracking-tight text-gray-900">Active Search Records</h3>
+              <p className="text-gray-500 text-[11px] font-black uppercase tracking-widest mt-2">Public awareness is the first line of defence</p>
             </div>
             {missingPersons.length > 0 && (
-              <span className="text-xs font-bold text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-full animate-pulse flex-shrink-0 ml-4">
-                {missingPersons.length} Active Case{missingPersons.length > 1 ? 's' : ''}
-              </span>
+              <div className="flex items-center gap-3 bg-red-50 px-5 h-10 rounded-full border border-red-100">
+                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                 <span className="text-[10px] font-black text-red-600 uppercase tracking-widest">
+                  {missingPersons.length} CRITICAL CASES
+                </span>
+              </div>
             )}
           </div>
 
@@ -234,27 +253,27 @@ const LandingPage = () => {
         </div>
 
         {/* Feature Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mt-16 animate-fade-in-up" style={{ animationDelay: '700ms' }}>
-          <div className="flex flex-col items-center p-8 rounded-2xl bg-white border border-gray-200 hover:bg-gray-50 hover:border-teal-300 transition-colors shadow-sm group">
-            <div className="w-16 h-16 rounded-full bg-teal-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Fingerprint size={28} className="text-teal-600" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl mt-24 animate-slide-up" style={{ animationDelay: '400ms' }}>
+          <div className="flex flex-col items-center p-10 rounded-[32px] bg-white border border-gray-100 hover-lift shadow-premium group">
+            <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mb-8 group-hover:rotate-6 transition-transform">
+              <Fingerprint size={28} className="text-blue-600" />
             </div>
-            <h3 className="text-xl font-bold mb-3">Facial Recognition</h3>
-            <p className="text-gray-500 text-sm leading-relaxed text-center">Your photo is automatically compared against active missing person records to find a match.</p>
+            <h3 className="text-xl font-black tracking-tight mb-4 text-gray-900">AI Biometrics</h3>
+            <p className="text-gray-500 text-[13px] font-medium leading-relaxed text-center">Proprietary facial landmark algorithms compare sightings against records in milliseconds.</p>
           </div>
-          <div className="flex flex-col items-center p-8 rounded-2xl bg-white border border-gray-200 hover:bg-gray-50 hover:border-amber-300 transition-colors shadow-sm group">
-            <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Globe size={28} className="text-amber-600" />
+          <div className="flex flex-col items-center p-10 rounded-[32px] bg-white border border-gray-100 hover-lift shadow-premium group">
+            <div className="w-16 h-16 rounded-2xl bg-teal-50 flex items-center justify-center mb-8 group-hover:-rotate-6 transition-transform">
+              <Globe size={28} className="text-teal-600" />
             </div>
-            <h3 className="text-xl font-bold mb-3">Live Mapping</h3>
-            <p className="text-gray-500 text-sm leading-relaxed text-center">Sightings are plotted on a live map and pushed directly to officer dashboards the moment you submit.</p>
+            <h3 className="text-xl font-black tracking-tight mb-4 text-gray-900">National Grid</h3>
+            <p className="text-gray-500 text-[13px] font-medium leading-relaxed text-center">A unified recovery network connecting citizens and law enforcement across all Indian states.</p>
           </div>
-          <div className="flex flex-col items-center p-8 rounded-2xl bg-white border border-gray-200 hover:bg-gray-50 hover:border-indigo-300 transition-colors shadow-sm group">
-            <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+          <div className="flex flex-col items-center p-10 rounded-[32px] bg-white border border-gray-100 hover-lift shadow-premium group">
+            <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center mb-8 group-hover:rotate-6 transition-transform">
               <Search size={28} className="text-indigo-600" />
             </div>
-            <h3 className="text-xl font-bold mb-3">Safe & Confidential</h3>
-            <p className="text-gray-500 text-sm leading-relaxed text-center">Your identity and location are kept private. Only authorised law enforcement officers can see your report.</p>
+            <h3 className="text-xl font-black tracking-tight mb-4 text-gray-900">Secure Privacy</h3>
+            <p className="text-gray-500 text-[13px] font-medium leading-relaxed text-center">Citizen reports are encrypted and accessible only by authorised officers via JWT-secured portals.</p>
           </div>
         </div>
       </main>

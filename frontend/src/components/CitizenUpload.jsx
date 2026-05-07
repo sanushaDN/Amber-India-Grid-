@@ -146,64 +146,63 @@ export default function CitizenUpload() {
   if (success) {
     const badge = getBadgeRank();
     return (
-      <div className="min-h-screen bg-transparent flex flex-col items-center justify-center p-8 text-center font-sans relative">
-        <div className="security-grid" />
-        <div className="relative mb-10">
-          <div className="shockwave-ring border-indigo-500/50" />
-          <div className="shockwave-ring border-teal-500/30" style={{ animationDelay: '0.3s' }} />
-          <div className="w-24 h-24 bg-teal-500/10 rounded-full flex items-center justify-center border border-teal-500/25 shadow-[0_0_80px_rgba(45,212,191,0.2)] relative z-10">
-            <Radio size={48} className="text-teal-400 animate-pulse" />
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-8 text-center font-sans relative overflow-hidden">
+        {/* Background Decoration */}
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[120px] -z-10" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-teal-500/5 rounded-full blur-[120px] -z-10" />
+
+        <div className="relative mb-10 animate-slide-up">
+          <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center border border-gray-200 shadow-xl shadow-blue-100 relative z-10 animate-pulse">
+            <Radio size={48} className="text-blue-600" />
           </div>
-          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap bg-teal-500 text-black px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.2em] shadow-lg animate-bounce z-20">
-            Sharing Your Location
+          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap bg-blue-600 text-white px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-lg z-20">
+            Broadcasting Signal
           </div>
         </div>
 
-        <h1 className="text-3xl font-black text-white uppercase tracking-tight mb-2">Thank <span className="text-amber-500">You!</span></h1>
-        <p className="text-slate-400 text-sm max-w-xs leading-relaxed mb-1">Your sighting report has been submitted. Officers have been notified.</p>
-        <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest mb-8 font-mono">
-          Reference No: #SIT-{Math.floor(Math.random() * 9000) + 1000}
+        <h1 className="text-4xl font-black text-gray-900 uppercase tracking-tight mb-2 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          Report <span className="text-blue-600">Active</span>
+        </h1>
+        <p className="text-gray-500 text-sm max-w-xs leading-relaxed mb-8 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          Your intelligence has been integrated into the national grid. Local patrol units are being updated.
         </p>
 
         {showBadge && (
-          <div className={`animate-fade-in-up max-w-sm w-full rounded-3xl border p-6 mb-8 relative overflow-hidden ${badge.bg}`}>
-            <div className="badge-shine absolute inset-0 rounded-3xl" />
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Smart Tip Verification</span>
-                </div>
-                <span className={`text-[9px] font-black uppercase tracking-widest ${badge.color}`}>{aiScore}% Match</span>
+          <div className="animate-slide-up max-w-sm w-full rounded-[32px] border bg-white shadow-premium p-8 mb-8 relative overflow-hidden" style={{ animationDelay: '0.3s' }}>
+            <div className="relative z-10 text-left">
+              <div className="flex items-center justify-between mb-6">
+                <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Biometric Verification</span>
+                <span className={`text-[9px] font-black uppercase px-2.5 py-1 rounded-lg border ${badge.bg}`}>{aiScore}% Match Score</span>
               </div>
-              <h3 className={`text-2xl font-black uppercase tracking-tight ${badge.color} mb-2`}>{badge.rank}</h3>
-              <p className="text-[10px] text-slate-400 leading-relaxed">{badge.desc}</p>
+              <h3 className={`text-2xl font-black uppercase tracking-tight mb-3 ${badge.color}`}>{badge.rank}</h3>
+              <p className="text-[11px] text-gray-500 font-medium leading-relaxed">{badge.desc}</p>
             </div>
           </div>
         )}
 
-        <div className="bg-[#000033]/40 border border-white/5 rounded-2xl p-5 max-w-sm w-full mb-8 text-left">
-          <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-            <Radio size={11} className="text-cyan-400 animate-pulse" /> What Happens Next
+        <div className="bg-white border border-gray-200 rounded-[32px] p-8 max-w-sm w-full mb-10 text-left shadow-premium animate-slide-up" style={{ animationDelay: '0.4s' }}>
+          <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <Activity size={12} className="text-blue-600 animate-pulse" /> Post-Report Telemetry
           </p>
-          <div className="space-y-3">
+          <div className="space-y-6">
             {[
-              { icon: <Shield size={12} />, text: 'Photo compared against active case records', done: true },
-              { icon: <Shield size={12} />, text: 'Officer team notified immediately', done: true },
-              { icon: <MapPin size={12} />, text: 'Officers being dispatched to your area', done: false },
+              { icon: <Shield size={14} />, text: 'Grid synchronisation established', done: true },
+              { icon: <Shield size={14} />, text: 'Officer terminals updated', done: true },
+              { icon: <MapPin size={14} />, text: 'Live intercept tracking active', done: false },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className={`w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 ${item.done ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/5 text-slate-600'}`}>
+              <div key={i} className="flex items-center gap-4">
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm border ${item.done ? 'bg-blue-600 text-white border-blue-600' : 'bg-gray-100 text-gray-300 border-gray-200'}`}>
                   {item.icon}
                 </div>
-                <span className={`text-[10px] font-bold ${item.done ? 'text-slate-300' : 'text-slate-600'}`}>{item.text}</span>
+                <span className={`text-xs font-bold ${item.done ? 'text-gray-900' : 'text-gray-300'}`}>{item.text}</span>
               </div>
             ))}
           </div>
         </div>
 
         <button onClick={() => { setSuccess(false); setShowBadge(false); setStep(1); setSelectedPerson(null); setFile(null); setFilePreview(null); setNote(''); }}
-          className="text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-white transition-all flex items-center gap-2">
-          <ArrowLeft size={12} /> Submit Another Sighting
+          className="group text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 transition-all flex items-center gap-2 animate-slide-up" style={{ animationDelay: '0.5s' }}>
+          <ArrowLeft size={12} className="group-hover:-translate-x-1 transition-transform" /> Submit Another Sighting
         </button>
       </div>
     );
@@ -401,11 +400,11 @@ export default function CitizenUpload() {
             )}
 
             <button onClick={handleSubmit} disabled={uploading || aiRunning}
-              className="w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white shadow-md">
+              className="w-full py-5 rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3 bg-gradient-premium text-white shadow-xl shadow-blue-200">
               {uploading ? (
-                <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Submitting...</>
-              ) : aiRunning ? ('Please wait...') : (
-                <><Radio size={16} /> Submit Sighting</>
+                <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Authorising...</>
+              ) : aiRunning ? ('Analysing Data...') : (
+                <><Radio size={16} /> Authorise Report Submission</>
               )}
             </button>
             <button onClick={() => setStep(2)} className="w-full mt-3 py-3 text-gray-500 hover:text-gray-700 text-[10px] font-black uppercase tracking-widest transition-all">
