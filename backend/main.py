@@ -272,3 +272,15 @@ async def report_sighting(
         await manager.broadcast(alert)
 
     return db_sighting
+
+@app.post("/broadcast/")
+async def send_broadcast(message: str = Form(...), current_user: models.User = Depends(get_current_user)):
+    """Broadcast an emergency message to all connected clients."""
+    alert = {
+        "type": "EMERGENCY_BROADCAST",
+        "message": message,
+        "timestamp": datetime.now().isoformat(),
+        "sender": "NATIONAL_COMMAND_CENTER"
+    }
+    await manager.broadcast(alert)
+    return {"success": True, "recipients": len(manager.active_connections)}

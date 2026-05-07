@@ -1,27 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
-/* AMBER-India Standard Academic Theme */
+/* AMBER-India Premium Academic Design System */
 
 :root {
-  --bg-dark: #f3f4f6;      /* gray-100 */
+  --bg-dark: #f8fafc;      /* slate-50 */
   --bg-panel: #ffffff;     /* white */
   --accent-blue: #2563eb;  /* blue-600 */
+  --accent-indigo: #4f46e5; /* indigo-600 */
   --accent-teal: #0d9488;  /* teal-600 */
-  --text-main: #1f2937;    /* gray-800 */
-  --text-muted: #6b7280;   /* gray-500 */
-  --border-light: #e5e7eb; /* gray-200 */
+  --text-main: #0f172a;    /* slate-900 */
+  --text-muted: #64748b;   /* slate-500 */
+  --border-light: #f1f5f9; /* slate-100 */
+  --border-medium: #e2e8f0; /* slate-200 */
 }
 
 body {
   background-color: var(--bg-dark);
   color: var(--text-main);
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
   position: relative;
-  line-height: normal;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 /* OVERRIDES FOR LEFTOVER DARK MODE CLASSES */

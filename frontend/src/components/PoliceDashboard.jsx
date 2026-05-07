@@ -523,10 +523,10 @@ export default function PoliceDashboard() {
                   <RecoveryStatusCard activeCount={active.length} recoveredCount={recovered.length} />
                 </div>
                 <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
-                  <WeeklyTrendChart persons={persons} />
+                  <CaseStatusPieChart activeCount={active.length} recoveredCount={recovered.length} />
                 </div>
                 <div className="animate-slide-up" style={{ animationDelay: '0.3s' }}>
-                  <PendingSightingsCard sightings={sightings} />
+                  <WeeklyTrendChart persons={persons} />
                 </div>
               </div>
 
@@ -586,38 +586,32 @@ export default function PoliceDashboard() {
                 </div>
 
                 <div className="col-span-4 space-y-8">
-                  <div className="bg-gradient-premium p-8 rounded-[32px] text-white shadow-lg shadow-blue-200 flex flex-col justify-between min-h-[200px]">
+                  <div className="bg-gradient-premium p-8 rounded-[32px] text-white shadow-lg shadow-blue-200 flex flex-col justify-between min-h-[220px]">
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 mb-2">Grid Health</p>
-                      <h4 className="text-2xl font-black leading-tight italic">Operational Stability: <span className="text-cyan-300">99.9%</span></h4>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 mb-2">Public Safety Protocol</p>
+                      <h4 className="text-2xl font-black leading-tight italic">Broadcast National Alert</h4>
+                      <p className="text-[10px] text-white/60 mt-2">Send a high-priority push notification to all citizens currently enrolled in the AMBER-India network.</p>
                     </div>
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase">
-                      <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"/>
-                      Global Nodes Verified
-                    </div>
+                    <button onClick={async () => {
+                      const msg = prompt("Enter emergency broadcast message:");
+                      if (!msg) return;
+                      const formData = new FormData();
+                      formData.append('message', msg);
+                      const res = await fetch(`${API_BASE}/broadcast/`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                        body: formData
+                      });
+                      if (res.ok) toast("Emergency Broadcast Sent to National Grid", "emerald");
+                      else toast("Failed to send broadcast", "rose");
+                    }} className="h-10 w-full bg-white text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest mt-4 hover:bg-blue-50 transition-all flex items-center justify-center gap-2">
+                      <Bell size={14}/> Send Alert
+                    </button>
                   </div>
                   
                   <div className="glass-panel shadow-premium p-8 rounded-[32px] flex-1">
-                    <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6">Top Contributing Regions</h3>
-                    <div className="space-y-5">
-                      {[
-                        { city: 'New Delhi', count: 124, pct: 85 },
-                        { city: 'Mumbai', count: 98, pct: 72 },
-                        { city: 'Bangalore', count: 76, pct: 64 },
-                        { city: 'Kolkata', count: 45, pct: 45 },
-                        { city: 'Chennai', count: 32, pct: 30 }
-                      ].map((c, i) => (
-                        <div key={i}>
-                          <div className="flex justify-between mb-2">
-                            <span className="text-xs font-bold text-gray-700">{c.city}</span>
-                            <span className="text-[10px] font-black text-blue-600">{c.count}</span>
-                          </div>
-                          <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-blue-600 rounded-full transition-all duration-1000" style={{ width: `${c.pct}%`, transitionDelay: `${i * 100}ms` }}/>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6">Case Status Breakdown</h3>
+                    <CaseStatusPieChart activeCount={active.length} recoveredCount={recovered.length} showLegend={true} />
                   </div>
                 </div>
               </div>
@@ -1070,6 +1064,56 @@ function PendingSightingsCard({ sightings }) {
         <div className="text-right">
           <span className="text-emerald-400 text-sm font-black leading-none">{highConf} Likely Matches</span>
           <p className="text-[8px] font-black text-amber-400 uppercase tracking-widest leading-tight mt-1">{pending} Needs Review</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CaseStatusPieChart({ activeCount, recoveredCount, showLegend = false }) {
+  const total = activeCount + recoveredCount || 1;
+  const recoveredPct = (recoveredCount / total) * 100;
+
+  const getCoordinatesForPercent = (percent) => {
+    const x = Math.cos(2 * Math.PI * percent);
+    const y = Math.sin(2 * Math.PI * percent);
+    return [x, y];
+  };
+
+  const startX = 1;
+  const startY = 0;
+  const [endX, endY] = getCoordinatesForPercent(recoveredPct / 100);
+  const largeArcFlag = recoveredPct > 50 ? 1 : 0;
+  const pathData = `M 0 0 L ${startX} ${startY} A 1 1 0 ${largeArcFlag} 1 ${endX} ${endY} L 0 0`;
+
+  return (
+    <div className={`flex items-center gap-8 ${showLegend ? 'flex-col' : ''}`}>
+      <div className="relative w-32 h-32 flex items-center justify-center">
+        <svg viewBox="-1.1 -1.1 2.2 2.2" className="w-full h-full transform -rotate-90">
+          <circle cx="0" cy="0" r="1" fill="#f1f5f9" />
+          <path d={pathData} fill="#2563eb" />
+          <circle cx="0" cy="0" r="0.6" fill="white" />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-xl font-black text-gray-900 leading-none">{Math.round(recoveredPct)}%</span>
+          <span className="text-[7px] font-black text-gray-400 uppercase tracking-widest mt-1">Recovery</span>
+        </div>
+      </div>
+      
+      <div className="flex-1 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+             <div className="w-2 h-2 rounded-full bg-blue-600" />
+             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Recovered</span>
+          </div>
+          <span className="text-xs font-black text-gray-900">{recoveredCount}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+             <div className="w-2 h-2 rounded-full bg-gray-200" />
+             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Pending</span>
+          </div>
+          <span className="text-xs font-black text-gray-900">{activeCount}</span>
         </div>
       </div>
     </div>

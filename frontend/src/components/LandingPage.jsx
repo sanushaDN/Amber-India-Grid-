@@ -44,6 +44,35 @@ const LandingPage = () => {
     }
   };
 
+  useEffect(() => {
+    // Real-time notification grid listener
+    const WS_BASE = 'wss://amber-backend-flng.onrender.com';
+    const socket = new WebSocket(`${WS_BASE}/ws/police_dashboard`);
+    
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'EMERGENCY_BROADCAST') {
+        if (Notification.permission === 'granted') {
+          new Notification('🚨 AMBER-India: EMERGENCY ALERT', {
+            body: data.message,
+            icon: '/favicon.ico',
+            tag: 'emergency-broadcast',
+            requireInteraction: true
+          });
+        }
+        // Also show in-app alert if subscribed or just browsing
+        alert(`🚨 EMERGENCY BROADCAST: ${data.message}`);
+      } else if (data.type === 'CRITICAL_MATCH' && subscribed) {
+        new Notification('⚠️ Potential Match Sighted', {
+          body: `A potential match for ${data.person_name} has been reported nearby. Stay vigilant.`,
+          icon: '/favicon.ico'
+        });
+      }
+    };
+
+    return () => socket.close();
+  }, [subscribed]);
+
   const triggerDemo = () => {
     setShowMock(true);
     setTimeout(() => { const a = new Audio('https://www.soundjay.com/buttons/beep-07a.mp3'); a.play().catch(() => {}); }, 500);
