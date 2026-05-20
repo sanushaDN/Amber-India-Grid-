@@ -53,3 +53,14 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+class SmsAlertResponse(BaseModel):
+    id: int
+    phone_number: str
+    message: str
+    sent_at: datetime
+    status: str
+    provider: str
+
+    class Config:
+        from_attributes = True

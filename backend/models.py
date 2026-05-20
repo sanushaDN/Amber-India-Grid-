@@ -46,3 +46,13 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(100), unique=True, index=True)
     hashed_password = Column(String(255))
+
+class SmsAlert(Base):
+    __tablename__ = "sms_alerts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    phone_number = Column(String(20), index=True)
+    message = Column(Text)
+    sent_at = Column(DateTime, default=datetime.datetime.utcnow)
+    status = Column(String(50))
+    provider = Column(String(50))

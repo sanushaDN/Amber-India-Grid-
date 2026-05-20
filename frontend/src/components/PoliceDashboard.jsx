@@ -73,6 +73,7 @@ export default function PoliceDashboard() {
   const [file, setFile]       = useState(null);
   const [submitting, setSub]  = useState(false);
   const [liveTrackers, setLiveTrackers] = useState({}); // { sighting_id: { lat, lng, name, ts } }
+  const [smsLogs, setSmsLogs]           = useState([]);
 
   // Reverse Geocoding — convert coordinates to a place name
   const getLocationName = async (lat, lng) => {
@@ -97,12 +98,14 @@ export default function PoliceDashboard() {
   };
 
   const fetchData = useCallback(async () => {
-    const [pRes, sRes] = await Promise.all([
+    const [pRes, sRes, smsRes] = await Promise.all([
       fetch(`${API_BASE}/missing_persons/`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }).catch(() => ({ ok: false })),
-      fetch(`${API_BASE}/sightings/`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }).catch(() => ({ ok: false }))
+      fetch(`${API_BASE}/sightings/`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }).catch(() => ({ ok: false })),
+      fetch(`${API_BASE}/sms_logs/`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }).catch(() => ({ ok: false }))
     ]);
     if (pRes.ok) setPersons(await pRes.json());
     if (sRes.ok) setSightings(await sRes.json());
+    if (smsRes.ok) setSmsLogs(await smsRes.json());
   }, []);
 
   const openTimeline = async (person) => {
@@ -583,6 +586,28 @@ export default function PoliceDashboard() {
                        </div>
                     </div>
                   </div>
+
+                  <div className="glass-panel shadow-premium p-8 rounded-[32px]">
+                    <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+                      <Radio size={14} className="text-blue-600 animate-pulse" /> Twilio SMS / WhatsApp Dispatch Logs (Volunteer Network)
+                    </h3>
+                    <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                      {smsLogs.length === 0 ? (
+                        <p className="text-[11px] text-gray-400 font-medium italic text-center py-8">No SMS dispatches registered. SMS alerts are generated automatically when a new case is registered.</p>
+                      ) : (
+                        smsLogs.map((log) => (
+                          <div key={log.id} className="border border-gray-100 bg-white p-4 rounded-2xl shadow-sm flex flex-col gap-2 hover:bg-gray-50/50 transition-colors">
+                            <div className="flex justify-between items-center">
+                              <span className="text-[10px] font-black text-blue-600 tracking-wider">📞 {log.phone_number}</span>
+                              <span className="text-[8px] font-black uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-100">{log.status} • {log.provider}</span>
+                            </div>
+                            <p className="text-[11px] text-gray-600 font-bold whitespace-pre-wrap">{log.message}</p>
+                            <span className="text-[8px] text-gray-400 font-mono self-end">{new Date(log.sent_at).toLocaleString()}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="col-span-4 space-y-8">
@@ -714,14 +739,60 @@ export default function PoliceDashboard() {
 
         {/* ── VIEW: REGISTRY TABLE ── */}
         {activeTab === 'cases' && (
-          <div className="h-full overflow-y-auto p-8 animate-fade-in-up custom-scrollbar">
-            <div className="max-w-6xl mx-auto">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-black uppercase tracking-widest flex items-center gap-3">
-                  <Users size={24} className="text-blue-600"/> CASE REGISTRY
-                </h2>
-                <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest bg-gray-50 px-4 py-2 rounded-xl border border-gray-200">
+          <div className="h-full overflow-y-auto p-8 animate-fade-in-up custom-scrollbar bg-gray-50/50">
+            <div className="max-w-6xl mx-auto space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-black uppercase tracking-widest flex items-center gap-3">
+                    <Users size={24} className="text-blue-600"/> CASE REGISTRY
+                  </h2>
+                  <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1">Manage and track recovered vs active search records</p>
+                </div>
+                <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest bg-white px-5 py-2.5 rounded-xl border border-gray-200 shadow-sm">
                   Total Records: {persons.length}
+                </div>
+              </div>
+
+              {/* Custom Registry Case Status Graphs */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between hover-lift">
+                  <div>
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Solved Cases</span>
+                    <h3 className="text-3xl font-black text-emerald-600">{recovered.length}</h3>
+                  </div>
+                  <div>
+                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden mt-4">
+                      <div className="h-full bg-emerald-500 rounded-full transition-all duration-1000" style={{ width: `${(recovered.length / (persons.length || 1)) * 100}%` }}/>
+                    </div>
+                    <p className="text-[9px] font-black text-gray-400 uppercase mt-2">{Math.round((recovered.length / (persons.length || 1)) * 100)}% of total cases</p>
+                  </div>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between hover-lift">
+                  <div>
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Pending Search</span>
+                    <h3 className="text-3xl font-black text-amber-500">{active.length}</h3>
+                  </div>
+                  <div>
+                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden mt-4">
+                      <div className="h-full bg-amber-500 rounded-full transition-all duration-1000" style={{ width: `${(active.length / (persons.length || 1)) * 100}%` }}/>
+                    </div>
+                    <p className="text-[9px] font-black text-gray-400 uppercase mt-2">{Math.round((active.length / (persons.length || 1)) * 100)}% active tracking</p>
+                  </div>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between hover-lift">
+                  <div>
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Overall Recovery Rate</span>
+                    <h3 className="text-3xl font-black text-blue-600">{Math.round((recovered.length / (persons.length || 1)) * 100)}%</h3>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-4 mt-4 text-[9px] font-black uppercase text-slate-500">
+                      <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 block"/> Solved</span>
+                      <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-amber-500 block"/> Pending</span>
+                    </div>
+                    <p className="text-[9px] font-black text-blue-500 uppercase mt-2">National Target: 90%</p>
+                  </div>
                 </div>
               </div>
 

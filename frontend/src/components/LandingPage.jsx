@@ -67,6 +67,22 @@ const LandingPage = () => {
           body: `A potential match for ${data.person_name} has been reported nearby. Stay vigilant.`,
           icon: '/favicon.ico'
         });
+      } else if (data.type === 'NEW_CASE') {
+        // Direct browser push alert when new case is registered
+        if (Notification.permission === 'granted') {
+          new Notification('🚨 AMBER-India: NEW MISSING PERSON', {
+            body: `ALERT: ${data.full_name}, Age ${data.age} was reported missing. Tap for details.`,
+            icon: '/favicon.ico',
+            tag: `new-case-${data.id}`,
+            requireInteraction: true
+          });
+        }
+        // Native alert in browser
+        alert(`🚨 NEIGHBOURHOOD AMBER ALERT:\nNew missing person registered: ${data.full_name}, Age ${data.age}.\nStay vigilant!`);
+        // Refresh missing persons list
+        fetch(`${API_BASE}/missing_persons/`)
+          .then(r => r.json())
+          .then(persons => { setMissingPersons(persons.filter(p => p.status === 'ACTIVE')); });
       }
     };
 

@@ -191,6 +191,48 @@ async def create_missing_person(
     db.add(db_person)
     db.commit()
     db.refresh(db_person)
+
+    # Broadcast to WebSocket network
+    try:
+        await manager.broadcast({
+            "type": "NEW_CASE",
+            "id": db_person.id,
+            "full_name": db_person.full_name,
+            "age": db_person.age,
+            "description": db_person.description,
+            "photo_path": db_person.photo_path
+        })
+    except Exception as e:
+        print(f"WS Broadcast error: {e}")
+
+    # Auto-dispatch SMS/WhatsApp Alerts to volunteer grid
+    volunteers = [
+        "+91 98765 43210", 
+        "+91 99887 76655", 
+        "+91 88776 65544", 
+        "+91 77665 54433"
+    ]
+    sms_message = (
+        f"🚨 AMBER ALERT 🚨\n"
+        f"Missing: {db_person.full_name} ({db_person.age}y)\n"
+        f"Last seen: {db_person.last_known_lat:.4f}, {db_person.last_known_lng:.4f}\n"
+        f"If spotted, report instantly: https://amber-india-frontend.onrender.com/report?personId={db_person.id}"
+    )
+
+    for phone in volunteers:
+        alert_log = models.SmsAlert(
+            phone_number=phone,
+            message=sms_message,
+            status="SENT",
+            provider="MOCK_TWILIO_GATEWAY"
+        )
+        db.add(alert_log)
+    try:
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"Failed to commit SMS alerts: {e}")
+
     return db_person
 
 @app.get("/missing_persons/", response_model=list[schemas.MissingPersonResponse])
@@ -284,3 +326,9 @@ async def send_broadcast(message: str = Form(...), current_user: models.User = D
     }
     await manager.broadcast(alert)
     return {"success": True, "recipients": len(manager.active_connections)}
+
+@app.get("/sms_logs/", response_model=list[schemas.SmsAlertResponse])
+def get_sms_logs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """Retrieve all dispatched SMS alert logs."""
+    logs = db.query(models.SmsAlert).order_by(models.SmsAlert.sent_at.desc()).offset(skip).limit(limit).all()
+    return logs
