@@ -25,13 +25,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* OVERRIDES FOR LEFTOVER DARK MODE CLASSES */
-.text-white, .text-slate-100, .text-slate-200, .text-slate-300 {
-  color: var(--text-main) !important;
+/* OVERRIDES FOR LEFTOVER DARK MODE CLASSES (LIGHT THEME NORMALIZATION) */
+.text-slate-100, .text-slate-200, .text-slate-300 {
+  color: var(--text-main);
 }
 
 .text-slate-400, .text-slate-500, .text-slate-600 {
-  color: var(--text-muted) !important;
+  color: var(--text-muted);
 }
 
 .bg-\[\#070b12\] {
@@ -55,10 +55,131 @@ body {
   background-color: #f3f4f6 !important; /* gray-100 */
 }
 
-/* Ensure headings are dark */
+/* Ensure headings don't have legacy text shadows */
 h1, h2, h3, h4, h5, p, span, div, label {
   text-shadow: none !important;
 }
+
+/* ═══ RESTORE HIGH CONTRAST WHITE TEXT ON DARK BACKGROUNDS & BUTTONS ═══ */
+.bg-gradient-premium,
+.bg-blue-600,
+.bg-emerald-600,
+.bg-green-600,
+.bg-rose-600,
+.bg-rose-500,
+.bg-red-500,
+.bg-amber-600,
+.bg-indigo-600 {
+  color: #ffffff !important;
+}
+
+.bg-gradient-premium *,
+.bg-blue-600 *,
+.bg-emerald-600 *,
+.bg-green-600 *,
+.bg-rose-600 *,
+.bg-rose-500 *,
+.bg-red-500 *,
+.bg-amber-600 *,
+.bg-indigo-600 * {
+  color: #ffffff !important;
+}
+
+/* Force standard text-white class to remain white */
+button.text-white,
+a.text-white,
+span.text-white,
+div.text-white,
+p.text-white,
+h1.text-white,
+h2.text-white,
+h3.text-white,
+h4.text-white,
+svg.text-white,
+.text-white-force {
+  color: #ffffff !important;
+}
+
+/* Ensure SVGs inside buttons/links/badges with dark backgrounds are white */
+button.text-white svg,
+a.text-white svg,
+.bg-gradient-premium svg,
+.bg-blue-600 svg,
+.bg-emerald-600 svg,
+.bg-green-600 svg,
+.bg-rose-600 svg,
+.bg-red-500 svg,
+.bg-rose-500 svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* ═══ DARK BIOMETRIC ALERT OVERLAY STYLING ═══ */
+.bg-dark-alert {
+  background-color: #090d16 !important;
+  border: 1px solid #1e293b !important;
+}
+
+.bg-dark-alert * {
+  color: inherit;
+}
+
+.bg-dark-alert .text-white {
+  color: #ffffff !important;
+}
+
+.bg-dark-alert .text-blue-400 {
+  color: #60a5fa !important;
+}
+
+.bg-dark-alert .text-rose-400 {
+  color: #fb7185 !important;
+}
+
+.bg-dark-alert .text-emerald-400 {
+  color: #34d399 !important;
+}
+
+.bg-dark-alert .text-amber-400 {
+  color: #fbbf24 !important;
+}
+
+.bg-dark-alert .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+.bg-dark-alert .text-slate-500 {
+  color: #64748b !important;
+}
+
+.bg-dark-alert .text-slate-600 {
+  color: #475569 !important;
+}
+
+.bg-dark-alert .border-white\/10 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.bg-dark-alert .bg-white\/\[0\.03\] {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+.bg-dark-alert .border-white\/5 {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.bg-dark-alert .border-rose-500\/40 {
+  border-color: rgba(244, 63, 94, 0.4) !important;
+}
+
+.bg-dark-alert .bg-rose-500\/20 {
+  background-color: rgba(244, 63, 94, 0.2) !important;
+}
+
+.bg-dark-alert .biometric-laser {
+  background: linear-gradient(to bottom, rgba(244, 63, 94, 0) 0%, rgba(244, 63, 94, 0.8) 50%, rgba(244, 63, 94, 0) 100%) !important;
+}
+
 
 /* ═══ CLEAN SCROLLBARS ═══ */
 ::-webkit-scrollbar { width: 8px; }

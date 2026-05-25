@@ -256,7 +256,7 @@ export default function PoliceDashboard() {
       {/* ══ V7.0 BIOMETRIC VERIFICATION OVERLAY ══ */}
       {activeAlert && (
         <div className="absolute inset-0 z-[1000] flex items-center justify-center p-8 backdrop-blur-md bg-black/70 animate-fade-in">
-          <div className="w-full max-w-5xl glass-panel silk-border p-10 rounded-[40px] shadow-2xl relative overflow-hidden">
+          <div className="w-full max-w-5xl bg-dark-alert p-10 rounded-[40px] shadow-2xl relative overflow-hidden">
             <div className="scanline" />
             
             <div className="flex justify-between items-start mb-8">
@@ -1244,7 +1244,7 @@ function WeeklyTrendChart({ persons, height = 140 }) {
   });
 
   const pathData = `M 0,${height} ` + points.map(p => `L ${p}`).join(' ') + ` L ${width},${height} Z`;
-  const lineData = `M ` + points.map(p => i === 0 ? `0,${points[0].split(',')[1]}` : `L ${p}`).join(' ');
+
 
   return (
     <div className="glass-panel shadow-sm p-6 rounded-[24px] hover-lift transition-all bg-white overflow-hidden flex flex-col">

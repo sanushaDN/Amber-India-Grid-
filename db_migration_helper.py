@@ -154,11 +154,174 @@ def restore_backup_to_db(database_url, backup_json="database_backup.json"):
     print("[+] Restore operation completed successfully!")
     return True
 
+def seed_demo_data(database_url):
+    """Initializes the database and seeds it with demo data including base64 images."""
+    print(f"[+] Connecting to database...")
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+        
+    engine = create_engine(database_url)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    
+    # Ensure tables are created
+    models.Base.metadata.create_all(bind=engine)
+    print("[+] Database tables initialized successfully.")
+    
+    # Seed default admin user
+    import auth_utils
+    admin_user = session.query(models.User).filter_by(username="admin").first()
+    if not admin_user:
+        hashed_pw = auth_utils.get_password_hash("password123")
+        admin_user = models.User(username="admin", hashed_password=hashed_pw)
+        session.add(admin_user)
+        print("[+] Admin user 'admin' created with password 'password123'")
+    else:
+        print("[+] Admin user 'admin' already exists.")
+        
+    # Helper to convert local image to base64 data URL
+    import base64
+    def get_local_image_base64(filepath, default_name):
+        if os.path.exists(filepath):
+            try:
+                with open(filepath, "rb") as f:
+                    data = f.read()
+                ext = filepath.rsplit('.', 1)[-1].lower() if '.' in filepath else 'jpg'
+                mime = 'image/png' if ext == 'png' else 'image/gif' if ext == 'gif' else 'image/jpeg'
+                encoded = base64.b64encode(data).decode('utf-8')
+                return f"data:{mime};base64,{encoded}"
+            except Exception as e:
+                print(f"[-] Error reading {filepath}: {e}")
+        # Return a simple mock SVG base64 if not found
+        return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><rect width='100' height='100' fill='%23cccccc'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='10' fill='%23666666'>" + default_name + "</text></svg>"
+
+    # Define mock cases
+    print("[+] Seeding cases...")
+    cases_data = [
+        {
+            "full_name": "Aarav Sharma",
+            "age": 8,
+            "description": "Wearing a red t-shirt and blue jeans. Last seen near Sector 62 Park. Speaks Hindi and English.",
+            "last_known_lat": 28.6284,
+            "last_known_lng": 77.3769,
+            "photo_path": get_local_image_base64("backend/uploads/missing_persons/missing_girl.jpg", "Aarav"),
+            "status": models.StatusEnum.ACTIVE
+        },
+        {
+            "full_name": "Sanusha Iyer",
+            "age": 14,
+            "description": "Last seen near Connaught Place Metro Station Gate 3. Wearing a white floral dress. Height 5'2\".",
+            "last_known_lat": 28.6304,
+            "last_known_lng": 77.2177,
+            "photo_path": get_local_image_base64("backend/uploads/missing_persons/sanusha.png", "Sanusha"),
+            "status": models.StatusEnum.ACTIVE
+        },
+        {
+            "full_name": "Rohan Verma",
+            "age": 11,
+            "description": "Last seen near Noida City Center. Wearing black school uniform. Left home with a green backpack.",
+            "last_known_lat": 28.5747,
+            "last_known_lng": 77.3560,
+            "photo_path": get_local_image_base64("backend/uploads/missing_persons/WIN_20231216_18_37_17_Pro (2).jpg", "Rohan"),
+            "status": models.StatusEnum.RECOVERED
+        }
+    ]
+    
+    seeded_cases = []
+    for c in cases_data:
+        person = session.query(models.MissingPerson).filter_by(full_name=c["full_name"]).first()
+        if not person:
+            person = models.MissingPerson(
+                full_name=c["full_name"],
+                age=c["age"],
+                description=c["description"],
+                last_known_lat=c["last_known_lat"],
+                last_known_lng=c["last_known_lng"],
+                photo_path=c["photo_path"],
+                status=c["status"]
+            )
+            session.add(person)
+            session.commit()
+            session.refresh(person)
+            print(f"[+] Seeded missing person: {c['full_name']}")
+        else:
+            print(f"[+] Missing person {c['full_name']} already exists.")
+        seeded_cases.append(person)
+        
+    # Define mock sightings
+    print("[+] Seeding citizen sightings...")
+    aarav = next((p for p in seeded_cases if p.full_name == "Aarav Sharma"), None)
+    sanusha = next((p for p in seeded_cases if p.full_name == "Sanusha Iyer"), None)
+    
+    if aarav:
+        sighting = session.query(models.CitizenSighting).filter_by(missing_person_id=aarav.id).first()
+        if not sighting:
+            sighting = models.CitizenSighting(
+                missing_person_id=aarav.id,
+                sighting_lat=28.6295,
+                sighting_lng=77.3780,
+                photo_path=get_local_image_base64("backend/uploads/sightings/WIN_20260313_15_33_34_Pro.jpg", "Aarav Sighting"),
+                match_score=84.5
+            )
+            session.add(sighting)
+            print("[+] Seeded sighting for Aarav Sharma (84.5% match).")
+            
+    if sanusha:
+        sighting = session.query(models.CitizenSighting).filter_by(missing_person_id=sanusha.id).first()
+        if not sighting:
+            sighting1 = models.CitizenSighting(
+                missing_person_id=sanusha.id,
+                sighting_lat=28.6312,
+                sighting_lng=77.2185,
+                photo_path=get_local_image_base64("backend/uploads/sightings/sanusha_DN.jpeg", "Sanusha Sighting 1"),
+                match_score=92.1
+            )
+            session.add(sighting1)
+            
+            sighting2 = models.CitizenSighting(
+                missing_person_id=sanusha.id,
+                sighting_lat=28.6289,
+                sighting_lng=77.2201,
+                photo_path=get_local_image_base64("backend/uploads/sightings/sanusha.png", "Sanusha Sighting 2"),
+                match_score=68.2
+            )
+            session.add(sighting2)
+            print("[+] Seeded 2 sightings for Sanusha Iyer.")
+            
+    # Seed SMS Logs
+    print("[+] Seeding Twilio/SMS Alert Logs...")
+    volunteers = [
+        "+91 98765 43210", 
+        "+91 99887 76655", 
+        "+91 88776 65544"
+    ]
+    for phone in volunteers:
+        for c in seeded_cases:
+            sms_message = (
+                f"🚨 AMBER ALERT 🚨\n"
+                f"Missing: {c.full_name} ({c.age}y)\n"
+                f"Last seen: {c.last_known_lat:.4f}, {c.last_known_lng:.4f}\n"
+                f"If spotted, report instantly: https://amber-india-frontend.onrender.com/report?personId={c.id}"
+            )
+            exists = session.query(models.SmsAlert).filter_by(phone_number=phone, message=sms_message).first()
+            if not exists:
+                alert = models.SmsAlert(
+                    phone_number=phone,
+                    message=sms_message,
+                    status="SENT",
+                    provider="MOCK_TWILIO_GATEWAY"
+                )
+                session.add(alert)
+    session.commit()
+    print("[+] Seeding completed successfully!")
+    return True
+
 if __name__ == "__main__":
     print("=== AMBER-India DB Migration Helper ===")
     print("1. Backup local SQLite database to JSON")
     print("2. Restore backup JSON to cloud Postgres (Render / Neon)")
-    choice = input("Enter choice (1/2): ").strip()
+    print("3. Initialize and seed database with clean demo data")
+    choice = input("Enter choice (1/2/3): ").strip()
     
     if choice == '1':
         backup_sqlite_to_json()
@@ -168,5 +331,11 @@ if __name__ == "__main__":
             print("[-] Database URL cannot be empty!")
             sys.exit(1)
         restore_backup_to_db(db_url)
+    elif choice == '3':
+        db_url = input("Enter your target database URL (DATABASE_URL): ").strip()
+        if not db_url:
+            print("[-] Database URL cannot be empty!")
+            sys.exit(1)
+        seed_demo_data(db_url)
     else:
         print("[-] Invalid choice.")
