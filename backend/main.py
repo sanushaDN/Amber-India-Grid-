@@ -15,6 +15,7 @@ import auth_utils
 from jose import JWTError, jwt
 import base64
 import hashlib
+import random
 
 def calculate_match_score(img1_path, img2_path):
     # Demo mock: deterministic score based on file content so same photos = same result
@@ -205,12 +206,10 @@ async def create_missing_person(
     except Exception as e:
         print(f"WS Broadcast error: {e}")
 
-    # Auto-dispatch SMS/WhatsApp Alerts to volunteer grid
-    volunteers = [
-        "+91 98765 43210", 
-        "+91 99887 76655", 
-        "+91 88776 65544", 
-        "+91 77665 54433"
+    # Simulate Mass Public Broadcast Alert to random nearby cellular devices
+    recipients = [
+        f"+91 {random.randint(6,9)}{''.join([str(random.randint(0,9)) for _ in range(9)])}"
+        for _ in range(random.randint(8, 15))  # Simulate 8 to 15 random public devices
     ]
     sms_message = (
         f"🚨 AMBER ALERT 🚨\n"
@@ -219,7 +218,7 @@ async def create_missing_person(
         f"If spotted, report instantly: https://amber-india-frontend.onrender.com/report?personId={db_person.id}"
     )
 
-    for phone in volunteers:
+    for phone in recipients:
         alert_log = models.SmsAlert(
             phone_number=phone,
             message=sms_message,
