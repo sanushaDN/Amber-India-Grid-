@@ -16,6 +16,7 @@ from jose import JWTError, jwt
 import base64
 import hashlib
 import random
+import urllib.parse
 
 def calculate_match_score(img1_path, img2_path):
     # Demo mock: deterministic score based on file content so same photos = same result
@@ -316,7 +317,7 @@ async def report_sighting(
 
 @app.post("/broadcast/")
 async def send_broadcast(message: str = Form(...), current_user: models.User = Depends(get_current_user)):
-    """Broadcast an emergency message to all connected clients."""
+    """Broadcast an emergency message to all connected clients AND send to Telegram."""
     alert = {
         "type": "EMERGENCY_BROADCAST",
         "message": message,
@@ -324,6 +325,33 @@ async def send_broadcast(message: str = Form(...), current_user: models.User = D
         "sender": "NATIONAL_COMMAND_CENTER"
     }
     await manager.broadcast(alert)
+
+    # --- TELEGRAM REAL MOBILE NOTIFICATION ---
+    TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    TELEGRAM_CHAT_ID   = os.getenv("TELEGRAM_CHAT_ID", "")
+    if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+        try:
+            import urllib.request
+            tg_message = (
+                f"🚨 *AMBER-INDIA EMERGENCY BROADCAST*\n\n"
+                f"📢 {message}\n\n"
+                f"🕐 {datetime.now().strftime('%d %b %Y, %I:%M %p')}\n"
+                f"📡 _Sent from: NATIONAL COMMAND CENTER_"
+            )
+            url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+            payload = urllib.parse.urlencode({
+                "chat_id": TELEGRAM_CHAT_ID,
+                "text": tg_message,
+                "parse_mode": "Markdown"
+            }).encode()
+            req = urllib.request.Request(url, data=payload, method="POST")
+            urllib.request.urlopen(req, timeout=5)
+            print(f"[TELEGRAM] Alert sent to chat {TELEGRAM_CHAT_ID}")
+        except Exception as e:
+            print(f"[TELEGRAM] Failed to send: {e}")
+    else:
+        print("[TELEGRAM] Bot token or chat ID not configured. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID env vars.")
+
     return {"success": True, "recipients": len(manager.active_connections)}
 
 @app.get("/sms_logs/", response_model=list[schemas.SmsAlertResponse])

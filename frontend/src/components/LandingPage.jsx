@@ -20,6 +20,7 @@ const LandingPage = () => {
   const [subscribed, setSubscribed] = useState(() => localStorage.getItem('amber_subscribed') === 'true');
   const [missingPersons, setMissingPersons] = useState([]);
   const [loadingPersons, setLoadingPersons] = useState(true);
+  const [emergencyBanner, setEmergencyBanner] = useState(null);
 
   useEffect(() => {
     fetch(`${API_BASE}/missing_persons/`)
@@ -52,6 +53,9 @@ const LandingPage = () => {
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'EMERGENCY_BROADCAST') {
+        // Show huge prominent banner at top of page
+        setEmergencyBanner(data.message);
+        // Also trigger native push notification if permitted
         if (Notification.permission === 'granted') {
           new Notification('🚨 AMBER-India: EMERGENCY ALERT', {
             body: data.message,
@@ -60,8 +64,6 @@ const LandingPage = () => {
             requireInteraction: true
           });
         }
-        // Also show in-app alert if subscribed or just browsing
-        alert(`🚨 EMERGENCY BROADCAST: ${data.message}`);
       } else if (data.type === 'CRITICAL_MATCH' && subscribed) {
         new Notification('⚠️ Potential Match Sighted', {
           body: `A potential match for ${data.person_name} has been reported nearby. Stay vigilant.`,
@@ -109,6 +111,25 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-[#030712] text-slate-100 flex flex-col relative overflow-x-hidden grid-bg">
+
+      {/* ═══ EMERGENCY BROADCAST BANNER ═══ */}
+      {emergencyBanner && (
+        <div className="emergency-alert-banner fixed top-0 left-0 right-0 z-[9999] bg-red-600 border-b-4 border-red-400 shadow-2xl shadow-red-900/60">
+          <div className="max-w-6xl mx-auto px-6 py-4 flex items-center gap-4">
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-white/20 flex items-center justify-center animate-pulse">
+              <ShieldAlert size={24} className="text-white" />
+            </div>
+            <div className="flex-1">
+              <p className="text-white font-black text-sm uppercase tracking-widest">🚨 NATIONAL EMERGENCY BROADCAST — AMBER-INDIA COMMAND CENTER</p>
+              <p className="text-red-100 text-base font-semibold mt-0.5">{emergencyBanner}</p>
+            </div>
+            <button onClick={() => setEmergencyBanner(null)} className="flex-shrink-0 text-white/70 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10">
+              <X size={20} />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Background Decoration */}
       <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-blue-950/20 to-transparent pointer-events-none -z-10" />
       <div className="absolute top-40 -right-20 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] -z-10 animate-pulse" style={{ animationDuration: '6s' }} />
