@@ -127,7 +127,7 @@ svg.text-white, .text-white-force {
   );
 }
 .biometric-laser {
-  position: absolute; inset-x-0; top: -4px; height: 4px;
+  position: absolute; left: 0; right: 0; top: -4px; height: 4px;
   background: linear-gradient(to bottom, transparent 0%, rgba(239,68,68,0.8) 50%, transparent 100%);
   animation: laserScan 2.5s linear infinite;
   z-index: 10;
