@@ -17,6 +17,31 @@ import base64
 import hashlib
 import random
 import urllib.parse
+import json
+
+CONFIG_FILE = "telegram_config.json"
+
+def load_telegram_config():
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, "r") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error loading Telegram config: {e}")
+    # Fallback to user provided default
+    return {
+        "token": "8788563186:AAEDSOcdJACBj3aaPYslq7yTQCUHgeLETeI",
+        "chat_id": "",
+        "chat_name": ""
+    }
+
+def save_telegram_config(config):
+    try:
+        with open(CONFIG_FILE, "w") as f:
+            json.dump(config, f, indent=2)
+    except Exception as e:
+        print(f"Error saving Telegram config: {e}")
+
 
 def calculate_match_score(img1_path, img2_path):
     # Demo mock: deterministic score based on file content so same photos = same result
@@ -233,6 +258,34 @@ async def create_missing_person(
         db.rollback()
         print(f"Failed to commit SMS alerts: {e}")
 
+    # --- TELEGRAM NEW CASE REAL NOTIFICATION ---
+    tg_config = load_telegram_config()
+    tg_token = tg_config.get("token")
+    tg_chat = tg_config.get("chat_id")
+    if tg_token and tg_chat:
+        try:
+            import urllib.request
+            tg_message = (
+                f"🚨 *NEW ACTIVE AMBER ALERT* 🚨\n\n"
+                f"👤 *Name:* {db_person.full_name}\n"
+                f"🎂 *Age:* {db_person.age} years old\n"
+                f"📝 *Description:* {db_person.description}\n"
+                f"📍 *Last Seen Location:* {db_person.last_known_lat:.4f}, {db_person.last_known_lng:.4f}\n\n"
+                f"🚨 If spotted, please report immediately via the AMBER-India platform.\n"
+                f"🔗 *Quick Report Link:* https://amber-india-frontend.onrender.com/report?personId={db_person.id}"
+            )
+            url = f"https://api.telegram.org/bot{tg_token}/sendMessage"
+            payload = urllib.parse.urlencode({
+                "chat_id": tg_chat,
+                "text": tg_message,
+                "parse_mode": "Markdown"
+            }).encode()
+            req = urllib.request.Request(url, data=payload, method="POST")
+            urllib.request.urlopen(req, timeout=5)
+            print(f"[TELEGRAM] Case alert sent to chat {tg_chat}")
+        except Exception as e:
+            print(f"[TELEGRAM] Case alert failed to send: {e}")
+
     return db_person
 
 @app.get("/missing_persons/", response_model=list[schemas.MissingPersonResponse])
@@ -327,9 +380,10 @@ async def send_broadcast(message: str = Form(...), current_user: models.User = D
     await manager.broadcast(alert)
 
     # --- TELEGRAM REAL MOBILE NOTIFICATION ---
-    TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
-    TELEGRAM_CHAT_ID   = os.getenv("TELEGRAM_CHAT_ID", "")
-    if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+    tg_config = load_telegram_config()
+    tg_token = tg_config.get("token")
+    tg_chat = tg_config.get("chat_id")
+    if tg_token and tg_chat:
         try:
             import urllib.request
             tg_message = (
@@ -338,21 +392,131 @@ async def send_broadcast(message: str = Form(...), current_user: models.User = D
                 f"🕐 {datetime.now().strftime('%d %b %Y, %I:%M %p')}\n"
                 f"📡 _Sent from: NATIONAL COMMAND CENTER_"
             )
-            url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+            url = f"https://api.telegram.org/bot{tg_token}/sendMessage"
             payload = urllib.parse.urlencode({
-                "chat_id": TELEGRAM_CHAT_ID,
+                "chat_id": tg_chat,
                 "text": tg_message,
                 "parse_mode": "Markdown"
             }).encode()
             req = urllib.request.Request(url, data=payload, method="POST")
             urllib.request.urlopen(req, timeout=5)
-            print(f"[TELEGRAM] Alert sent to chat {TELEGRAM_CHAT_ID}")
+            print(f"[TELEGRAM] Alert sent to chat {tg_chat}")
         except Exception as e:
             print(f"[TELEGRAM] Failed to send: {e}")
     else:
-        print("[TELEGRAM] Bot token or chat ID not configured. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID env vars.")
+        print("[TELEGRAM] Bot token or chat ID not configured.")
 
     return {"success": True, "recipients": len(manager.active_connections)}
+
+# --- TELEGRAM MANAGEMENT ENDPOINTS ---
+
+@app.get("/telegram/status")
+def get_telegram_status():
+    """Retrieve current Telegram bot and linkage configuration status."""
+    return load_telegram_config()
+
+@app.post("/telegram/config")
+def update_telegram_config(token: str = Form(...), chat_id: str = Form("")):
+    """Save/update the Telegram Bot Token."""
+    config = load_telegram_config()
+    config["token"] = token
+    if chat_id:
+        config["chat_id"] = chat_id
+    save_telegram_config(config)
+    return {"success": True, "config": config}
+
+@app.post("/telegram/sync")
+def sync_telegram_chat():
+    """Pull the latest chat update from Telegram to link the user's phone automatically."""
+    config = load_telegram_config()
+    token = config.get("token")
+    if not token:
+        raise HTTPException(status_code=400, detail="Telegram bot token not configured.")
+    
+    try:
+        import urllib.request
+        url = f"https://api.telegram.org/bot{token}/getUpdates"
+        req = urllib.request.Request(url, method="GET")
+        with urllib.request.urlopen(req, timeout=5) as response:
+            data = json.loads(response.read().decode())
+            
+        if not data.get("ok"):
+            raise HTTPException(status_code=400, detail=f"Telegram API error: {data.get('description', 'Unknown error')}")
+            
+        results = data.get("result", [])
+        if not results:
+            raise HTTPException(status_code=404, detail="No recent messages found. Please search for your bot in Telegram and press 'Start' or send a message first, then try again!")
+            
+        # Find the latest private message
+        latest_chat = None
+        for update in reversed(results):
+            msg = update.get("message") or update.get("edited_message")
+            if msg and msg.get("chat") and msg["chat"].get("type") == "private":
+                chat = msg["chat"]
+                latest_chat = {
+                    "id": str(chat["id"]),
+                    "name": chat.get("first_name", "") + (" " + chat.get("last_name", "") if chat.get("last_name") else "")
+                }
+                break
+                
+        if not latest_chat:
+            raise HTTPException(status_code=404, detail="No private chat updates found. Please send a message directly to the bot first!")
+            
+        config["chat_id"] = latest_chat["id"]
+        config["chat_name"] = latest_chat["name"]
+        save_telegram_config(config)
+        
+        # Send confirmation message
+        welcome_message = (
+            f"🔔 *AMBER-INDIA LINK SUCCESSFUL*\n\n"
+            f"👤 Hello *{latest_chat['name']}*,\n"
+            f"Your mobile device has been successfully linked to the AMBER-India Recovery Grid.\n\n"
+            f"🚨 You will now receive high-priority regional emergency broadcasts and active cases directly here."
+        )
+        send_url = f"https://api.telegram.org/bot{token}/sendMessage"
+        payload = urllib.parse.urlencode({
+            "chat_id": config["chat_id"],
+            "text": welcome_message,
+            "parse_mode": "Markdown"
+        }).encode()
+        send_req = urllib.request.Request(send_url, data=payload, method="POST")
+        urllib.request.urlopen(send_req, timeout=5)
+        
+        return {"success": True, "chat_name": latest_chat["name"], "chat_id": latest_chat["id"]}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to sync with Telegram: {str(e)}")
+
+@app.post("/telegram/test")
+def test_telegram_alert():
+    """Send a demo test broadcast to the linked device."""
+    config = load_telegram_config()
+    token = config.get("token")
+    chat_id = config.get("chat_id")
+    if not token or not chat_id:
+        raise HTTPException(status_code=400, detail="Telegram not linked yet. Please sync your device first!")
+        
+    try:
+        import urllib.request
+        test_message = (
+            f"🚨 *AMBER-INDIA DEMO ALERT* 🚨\n\n"
+            f"📢 This is a system test message to verify connection integrity.\n"
+            f"📱 Status: ONLINE\n"
+            f"📶 Latency: optimal\n"
+            f"🤖 Bot Service: connected"
+        )
+        url = f"https://api.telegram.org/bot{token}/sendMessage"
+        payload = urllib.parse.urlencode({
+            "chat_id": chat_id,
+            "text": test_message,
+            "parse_mode": "Markdown"
+        }).encode()
+        req = urllib.request.Request(url, data=payload, method="POST")
+        urllib.request.urlopen(req, timeout=5)
+        return {"success": True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to send test alert: {str(e)}")
 
 @app.get("/sms_logs/", response_model=list[schemas.SmsAlertResponse])
 def get_sms_logs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):

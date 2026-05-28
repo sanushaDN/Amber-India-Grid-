@@ -75,6 +75,17 @@ export default function PoliceDashboard() {
   const [liveTrackers, setLiveTrackers] = useState({}); // { sighting_id: { lat, lng, name, ts } }
   const [smsLogs, setSmsLogs]           = useState([]);
 
+  const [tgConfig, setTgConfig]           = useState({ token: '', chat_id: '', chat_name: '' });
+  const [tgSyncing, setTgSyncing]         = useState(false);
+  const [tgTesting, setTgTesting]         = useState(false);
+
+  const fetchTelegramStatus = useCallback(async () => {
+    const r = await fetch(`${API_BASE}/telegram/status`).catch(() => null);
+    if (r?.ok) {
+      setTgConfig(await r.json());
+    }
+  }, []);
+
   // Reverse Geocoding — convert coordinates to a place name
   const getLocationName = async (lat, lng) => {
     try {
@@ -133,6 +144,7 @@ export default function PoliceDashboard() {
 
   useEffect(() => {
     fetchData();
+    fetchTelegramStatus();
     const ws = new WebSocket(`${WS_BASE}/ws/police_dashboard`);
     ws.onmessage = (e) => {
       const d = JSON.parse(e.data);
@@ -635,6 +647,95 @@ export default function PoliceDashboard() {
                     }} className="h-10 w-full bg-slate-900 text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest mt-4 hover:bg-blue-50 transition-all flex items-center justify-center gap-2">
                       <Bell size={14}/> Send Alert
                     </button>
+                  </div>
+
+                  {/* Telegram Mobile Broadcast Integration Panel */}
+                  <div className="glass-panel shadow-premium p-8 rounded-[32px] flex flex-col justify-between border border-white/5 bg-slate-950/40 backdrop-blur-xl relative overflow-hidden">
+                    <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div>
+                      <div className="flex justify-between items-start mb-4">
+                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Mobile Broadcast Link</p>
+                        <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded border transition-colors ${
+                          tgConfig.chat_id ? 'bg-emerald-950/30 text-emerald-500 border-emerald-500/20' : 'bg-rose-950/30 text-rose-500 border-rose-500/20'
+                        }`}>
+                          {tgConfig.chat_id ? 'Connected' : 'Disconnected'}
+                        </span>
+                      </div>
+                      <h4 className="text-lg font-black text-slate-100 flex items-center gap-2 mb-2 italic">
+                        📱 Mobile Alert Engine
+                      </h4>
+                      <p className="text-[10px] text-slate-400 leading-relaxed mb-4">
+                        Receive live missing person alerts, matching notifications, and high-priority regional emergencies directly on your mobile device.
+                      </p>
+
+                      {tgConfig.chat_id ? (
+                        <div className="bg-slate-900/50 border border-white/5 p-3 rounded-2xl mb-4">
+                          <p className="text-[8px] text-slate-500 uppercase tracking-widest font-black mb-1">Active Receiver Device</p>
+                          <p className="text-[11px] text-slate-200 font-bold flex items-center gap-2">
+                            👤 {tgConfig.chat_name || "Active Session"} 
+                            <span className="text-[9px] text-slate-500 font-mono">({tgConfig.chat_id})</span>
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="bg-blue-950/20 border border-blue-500/20 p-3 rounded-2xl mb-4 text-[9px] text-blue-300 font-medium space-y-1">
+                          <p className="font-black text-[8px] uppercase tracking-wider text-blue-400">Automatic Link Instructions:</p>
+                          <p>1. Open Telegram & search for <span className="font-bold text-white font-mono">@amber_india_bot</span> (or your custom bot)</p>
+                          <p>2. Click <span className="font-bold text-white">Start</span> or send a text message</p>
+                          <p>3. Click the <span className="font-bold text-white">Link Mobile</span> button below to pair</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2 mt-2 z-10">
+                      <button 
+                        onClick={async () => {
+                          setTgSyncing(true);
+                          try {
+                            const res = await fetch(`${API_BASE}/telegram/sync`, { method: 'POST' });
+                            const data = await res.json();
+                            if (res.ok) {
+                              toast(`Linked to ${data.chat_name} on Telegram!`, 'emerald');
+                              fetchTelegramStatus();
+                            } else {
+                              toast(data.detail || "Failed to link bot. Send message to bot first!", 'rose');
+                            }
+                          } catch (err) {
+                            toast("Failed to sync connection", 'rose');
+                          } finally {
+                            setTgSyncing(false);
+                          }
+                        }} 
+                        disabled={tgSyncing}
+                        className="flex-1 h-9 bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                      >
+                        {tgSyncing ? 'Syncing Grid...' : tgConfig.chat_id ? 'Re-sync Phone' : 'Link Mobile'}
+                      </button>
+
+                      {tgConfig.chat_id && (
+                        <button 
+                          onClick={async () => {
+                            setTgTesting(true);
+                            try {
+                              const res = await fetch(`${API_BASE}/telegram/test`, { method: 'POST' });
+                              if (res.ok) {
+                                toast("Test Alert sent to your phone!", 'emerald');
+                              } else {
+                                toast("Failed to send test alert", 'rose');
+                              }
+                            } catch (err) {
+                              toast("Test transmission failed", 'rose');
+                            } finally {
+                              setTgTesting(false);
+                            }
+                          }} 
+                          disabled={tgTesting}
+                          className="h-9 w-16 bg-slate-900 border border-white/5 text-slate-400 hover:text-white hover:border-slate-700 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center"
+                          title="Send test transmission"
+                        >
+                          {tgTesting ? '...' : 'Test'}
+                        </button>
+                      )}
+                    </div>
                   </div>
                   
                   <div className="glass-panel shadow-premium p-8 rounded-[32px] flex-1">
