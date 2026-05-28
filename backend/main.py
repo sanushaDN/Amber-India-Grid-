@@ -25,13 +25,18 @@ def load_telegram_config():
     if os.path.exists(CONFIG_FILE):
         try:
             with open(CONFIG_FILE, "r") as f:
-                return json.load(f)
+                cfg = json.load(f)
+                # Allow environment variable to override stored token
+                env_token = os.getenv("TELEGRAM_BOT_TOKEN", "")
+                if env_token:
+                    cfg["token"] = env_token
+                return cfg
         except Exception as e:
             print(f"Error loading Telegram config: {e}")
-    # Fallback to user provided default
+    # Read token from environment variable only - never hardcode
     return {
-        "token": "8788563186:AAEDSOcdJACBj3aaPYslq7yTQCUHgeLETeI",
-        "chat_id": "",
+        "token": os.getenv("TELEGRAM_BOT_TOKEN", ""),
+        "chat_id": os.getenv("TELEGRAM_CHAT_ID", ""),
         "chat_name": ""
     }
 
