@@ -244,7 +244,10 @@ export default function PoliceDashboard() {
   const critical  = active.filter(p => (Date.now() - new Date(p.reported_at)) / 3600000 > 24);
 
   return (
-    <div className="h-screen w-screen bg-slate-950 text-slate-100 flex flex-col font-sans overflow-hidden relative">
+    <div className="h-screen w-screen bg-[#030712] text-slate-100 flex flex-col font-sans overflow-hidden relative grid-bg">
+      {/* Ambient Glows */}
+      <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-teal-600/10 rounded-full blur-[120px] pointer-events-none" />
 
       {toastMsg && (
         <div className={`fixed top-6 right-6 z-[9999] animate-slide-in px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl flex items-center gap-3
@@ -356,7 +359,7 @@ export default function PoliceDashboard() {
         </div>
       )}
 
-      <header className="h-16 flex-shrink-0 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 flex items-center justify-between px-8 z-50 sticky top-0">
+      <header className="h-16 flex-shrink-0 bg-slate-950/50 backdrop-blur-xl border-b border-slate-800/60 shadow-xl shadow-blue-900/10 flex items-center justify-between px-8 z-50 sticky top-0">
         <div className="flex items-center gap-10 h-full">
           <div className="flex items-center gap-4 border-r border-slate-800 pr-8 h-8">
             <div className="flex flex-col items-center justify-center">
