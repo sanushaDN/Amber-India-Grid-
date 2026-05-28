@@ -140,8 +140,8 @@ const LandingPage = () => {
           Real-time Grid • Available 24/7
         </div>
         
-        <h2 className="text-6xl md:text-8xl font-black tracking-tighter mb-8 max-w-5xl animate-slide-up leading-tight text-white">
-          AMBER-India: <span className="text-gradient-blue font-black">Sovereign Recovery Grid</span>
+        <h2 className="text-6xl md:text-8xl font-light tracking-tighter mb-8 max-w-5xl animate-slide-up leading-tight text-white">
+          AMBER-India: <span className="text-gradient-blue font-light">Sovereign Recovery Grid</span>
         </h2>
 
         
